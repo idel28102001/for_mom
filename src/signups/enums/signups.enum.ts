@@ -1,0 +1,4 @@
+export enum SignupsEnum {
+  CONSULTATION = 'CONSULTATION',
+  DIAGNOSTIC = 'DIAGNOSTIC',
+}
