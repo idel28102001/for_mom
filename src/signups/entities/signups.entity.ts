@@ -10,12 +10,15 @@ export class SignupsEntity {
   @Column({ type: 'timestamp' })
   date: Date;
 
-  @Column()
+  @Column({ type: 'enum', enum: SignupsEnum })
   type: SignupsEnum;
 
   @ManyToOne(() => UsersCenterEntity, (user) => user.signups)
   user: UsersCenterEntity;
 
   @Column({ nullable: true })
-  messageId: number;
+  comment: string;
+
+  @Column({ type: 'numeric' })
+  duration: number;
 }

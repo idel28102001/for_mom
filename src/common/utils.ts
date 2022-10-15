@@ -1,5 +1,4 @@
 import {
-  addDays,
   addMinutes,
   compareAsc,
   format,
@@ -129,24 +128,21 @@ export const getDateFromDays = (day: string, date: Date) => {
   return makeMoscow(getYear(date), month, Number(result.day));
 };
 
-export const getNDays = (daysCount: number, startDate: Date) => {
-  const emptyArray = [];
-  for (let i = 0; i < daysCount; i++) {
-    const currDate = addDays(startDate, i);
-    emptyArray.push(format(currDate, 'd MMMM, (cccc)', { locale: ru }));
-  }
-  return emptyArray;
+export const prepareNDays = (
+  allDays: { day: string; times: { date: Date }[] }[],
+) => {
+  const days = allDays.map((e) => ({
+    day: e.day,
+    word: format(new Date(e.day), 'd MMMM, (cccc)', { locale: ru }),
+  }));
+  const words = days.map((e) => e.word);
+  words.push('Отмена');
+  const all = words.map((e) => ({ text: e }));
+  return { days, words, keyboard: sliceIntoChunks<{ text: string }>(all, 2) };
 };
 
-export const prepareNDays = (daysCount: number, startDate: Date) => {
-  const days = getNDays(daysCount, startDate);
-  days.push('Отмена');
-  const all = days.map((e) => ({ text: e }));
-  return { days, keyboard: sliceIntoChunks<{ text: string }>(all, 2) };
-};
-
-export const preparyTime = (type: SignupsEnum) => {
-  const times = getTimes(type, [], []);
+export const preparyTime = (timeArray: Array<Date>) => {
+  const times = timeArray.map((e) => format(e, 'kk:mm'));
   const all = times.map((e) => ({ text: e }));
   const keyboard = sliceIntoChunks<{ text: string }>(all, 6);
   keyboard.push([{ text: 'Отмена' }]);

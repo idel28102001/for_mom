@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UsersCenterTokenEnum } from '../enums/tokens/users-center.token.enum';
 import { Repository } from 'typeorm';
 import { UsersCenterEntity } from '../entities/users.entity';
+import { User } from '@grammyjs/types';
 
 @Injectable()
 export class UsersCenterService {
@@ -12,5 +13,31 @@ export class UsersCenterService {
 
   get repo() {
     return this.usersCenterRepo;
+  }
+
+  async saveToDBUser(obj: User) {
+    return await this.usersCenterRepo
+      .createQueryBuilder('U')
+      .insert()
+      .into(UsersCenterEntity)
+      .values({
+        telegramId: obj.id.toString(),
+        firstname: obj.first_name,
+        lastname: obj.last_name,
+        username: obj.username,
+      })
+      .orIgnore()
+      .execute();
+  }
+
+  async savePhoneNumber(obj: User, phone: string) {
+    return await this.usersCenterRepo.update(
+      { telegramId: obj.id.toString() },
+      { phoneNumber: phone },
+    );
+  }
+
+  async save() {
+    console.log(await this.usersCenterRepo.find());
   }
 }

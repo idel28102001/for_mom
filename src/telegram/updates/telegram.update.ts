@@ -13,6 +13,9 @@ import { TelegramTokenEnum } from '../enums/tokens/telegram.token.enum';
 import { TelegramService } from '../services/telegram.service';
 import { UsersCenterTokenEnum } from '../../users-center/enums/tokens/users-center.token.enum';
 import { UsersCenterService } from '../../users-center/services/users-center.service';
+import { SignupsTokenEnum } from '../../signups/enums/signups.token.enum';
+import { SignupsService } from '../../signups/services/signups.service';
+import { SignupsEnum } from '../../signups/enums/signups.enum';
 
 type MyContext = Context & ConversationFlavor;
 
@@ -21,7 +24,10 @@ export class TelegramUpdate {
   constructor(
     @InjectBot() private readonly bot,
     @Inject(TelegramTokenEnum.TELEGRAM_SERVICES_TOKEN)
-    private readonly telegramService: TelegramService,
+    readonly telegramService: TelegramService,
+
+    @Inject(SignupsTokenEnum.SIGNUPS_SERVICES_TOKEN)
+    readonly signupsService: SignupsService,
 
     @Inject(UsersCenterTokenEnum.USERS_CENTER_SERVICES_TOKEN)
     private readonly usersCenterService: UsersCenterService,
@@ -32,11 +38,26 @@ export class TelegramUpdate {
       await ctx.conversation.exit();
       await telegramMenuUtility(ctx);
     });
-    bot.use(createConversation(this.telegramService.diagnostic, 'diagnostic'));
+    bot.use(
+      createConversation(
+        this.telegramService.consDiagnostic.bind(this, SignupsEnum.DIAGNOSTIC),
+        'diagnostic',
+      ),
+    );
+    bot.use(
+      createConversation(
+        this.telegramService.consDiagnostic.bind(
+          this,
+          SignupsEnum.CONSULTATION,
+        ),
+        'consultation',
+      ),
+    );
   }
 
   @Start()
   async onStart(@Ctx() ctx: Context): Promise<void> {
+    await this.usersCenterService.saveToDBUser(ctx.from);
     await telegramMenuUtility(ctx);
   }
   @Hears(CONSTANTS.DIAGNOSTIC)
@@ -45,8 +66,8 @@ export class TelegramUpdate {
   }
 
   @Hears(CONSTANTS.CONSULTATION)
-  async cons(@Ctx() ctx: Context): Promise<void> {
-    await ctx.reply('Вы записываетесь на консультацию');
+  async cons(@Ctx() ctx: MyContext): Promise<void> {
+    await ctx.conversation.enter('consultation');
   }
 
   @Help()

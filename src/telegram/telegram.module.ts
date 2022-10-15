@@ -6,6 +6,7 @@ import { NestjsGrammyModule } from '@grammyjs/nestjs';
 import { TelegramProvider } from './telegram.provider';
 import { SignupsModule } from '../signups/signups.module';
 import { UsersCenterModule } from '../users-center/users-center.module';
+import { TelegramTokenEnum } from './enums/tokens/telegram.token.enum';
 
 @Module({
   imports: [
@@ -22,5 +23,6 @@ import { UsersCenterModule } from '../users-center/users-center.module';
     }),
   ],
   providers: TelegramProvider,
+  exports: [TelegramTokenEnum.TELEGRAM_SERVICES_TOKEN],
 })
 export class TelegramModule {}
