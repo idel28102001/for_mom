@@ -3,7 +3,7 @@ import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { google } from 'googleapis';
 import { config } from '../../common/config';
 import { addMinutes } from 'date-fns';
-import { CONSTANTS, DIALOGS } from '../../common/constants';
+import { DIALOGS, Texts } from '../../common/texts';
 
 @Injectable()
 export class GoogleService {
@@ -65,7 +65,7 @@ export class GoogleService {
   }) {
     const toG = DIALOGS.MEETINGS.CREATE.ALL.TO_GOOGLE;
     const event = {
-      summary: `${CONSTANTS[obj.type]} ${toG.P9} ${obj.name}(@${obj.username})`,
+      summary: `${Texts[obj.type]} ${toG.P9} ${obj.name}(@${obj.username})`,
       description: `${toG.P8}: ${obj.phoneNumber}\n${toG.P6}: ${
         obj.comment || toG.P7
       }`,

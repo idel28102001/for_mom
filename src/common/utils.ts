@@ -4,7 +4,7 @@ import { SignupsEntity } from '../signups/entities/signups.entity';
 import { ru } from 'date-fns/locale';
 import { Context } from 'grammy';
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
-import { CANCEL } from './constants';
+import { CANCEL } from './texts';
 
 export type MyConversation = Conversation<MyContext>;
 export type MyContext = Context & ConversationFlavor;

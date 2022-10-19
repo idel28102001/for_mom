@@ -7,7 +7,7 @@ import {
 } from '@grammyjs/conversations';
 import { telegramMenuUtility } from '../utility/telegramMenuUtility';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
-import { CANCEL, CONSTANTS } from '../../common/constants';
+import { CANCEL, Texts } from '../../common/texts';
 
 export const composer = (thisv2: TelegramUpdate) => {
   const composer = new Composer<
@@ -58,31 +58,31 @@ export const composer = (thisv2: TelegramUpdate) => {
     createConversation(thisv2.telegramService.editMeet.bind(thisv2), 'edit'),
   );
 
-  composer.hears(CONSTANTS.DIAGNOSTIC, async (ctx) => {
+  composer.hears(Texts.DIAGNOSTIC, async (ctx) => {
     try {
       await ctx.conversation.enter('diagnostic');
     } catch (e) {}
   });
 
-  composer.hears(CONSTANTS.CONSULTATION, async (ctx) => {
+  composer.hears(Texts.CONSULTATION, async (ctx) => {
     try {
       await ctx.conversation.enter('consultation');
     } catch (e) {}
   });
 
-  composer.hears(CONSTANTS.EDIT, async (ctx) => {
+  composer.hears(Texts.EDIT, async (ctx) => {
     try {
       await ctx.conversation.enter('edit');
     } catch (e) {}
   });
 
-  composer.hears(CONSTANTS.CANCEL, async (ctx) => {
+  composer.hears(Texts.CANCEL, async (ctx) => {
     try {
       await ctx.conversation.enter('cancel');
     } catch (e) {}
   });
 
-  composer.hears(CONSTANTS.SHOW, async (ctx) => {
+  composer.hears(Texts.SHOW, async (ctx) => {
     try {
       await ctx.conversation.enter('show');
     } catch (e) {}

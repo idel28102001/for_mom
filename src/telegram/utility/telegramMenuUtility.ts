@@ -1,5 +1,5 @@
 import { Context } from 'grammy';
-import { CANCEL, CONSTANTS, DIALOGS } from '../../common/constants';
+import { CANCEL, DIALOGS, Texts } from '../../common/texts';
 
 export const confirmKeyboard = {
   reply_markup: {
@@ -18,9 +18,9 @@ export const confirmKeyboard = {
 export const menuKeyboard = {
   reply_markup: {
     keyboard: [
-      [{ text: CONSTANTS.DIAGNOSTIC }, { text: CONSTANTS.CONSULTATION }],
-      [{ text: CONSTANTS.EDIT }, { text: CONSTANTS.CANCEL }],
-      [{ text: CONSTANTS.SHOW }],
+      [{ text: Texts.DIAGNOSTIC }, { text: Texts.CONSULTATION }],
+      [{ text: Texts.EDIT }, { text: Texts.CANCEL }],
+      [{ text: Texts.SHOW }],
     ],
     resize_keyboard: true,
   },

@@ -115,7 +115,7 @@ export const diagnosticTest = async (
   //     ctx.reply('Введите ваш комментарий'),
   //   );
   // }
-  // let resText = `Вы выбрали:\nВстреча: ${CONSTANTS.DIAGNOSTIC}\nДата: ${date}\nВремя: ${time}\nТелефон: ${phone}`;
+  // let resText = `Вы выбрали:\nВстреча: ${Texts.DIAGNOSTIC}\nДата: ${date}\nВремя: ${time}\nТелефон: ${phone}`;
   // resText = text ? `${resText}\nКомментарий: ${text}` : resText;
   //
   // await ctx.reply(`${resText}\n\nВы подтверждаете?`, {

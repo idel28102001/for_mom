@@ -10,7 +10,7 @@ import { TasksService } from '../../tasks/services/tasks.service';
 import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { SignupsEntity } from '../../signups/entities/signups.entity';
-import { CANCEL, DIALOGS } from '../../common/constants';
+import { CANCEL, DIALOGS } from '../../common/texts';
 import { MyContext, sliceIntoChunks } from '../../common/utils';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 

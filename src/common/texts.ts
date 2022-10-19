@@ -1,4 +1,4 @@
-export enum CONSTANTS {
+export enum Texts {
   CONSULTATION = '💎Консультация💎',
   DIAGNOSTIC = '💫Диагностика💫',
   EDIT = '✏Изменить встречу✏',

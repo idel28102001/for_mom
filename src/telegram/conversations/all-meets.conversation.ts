@@ -4,7 +4,7 @@ import { TelegramUpdate } from '../updates/telegram.update';
 import { choose, prepareNDaysForOther } from '../../common/utils';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { DIALOGS } from '../../common/constants';
+import { DIALOGS } from '../../common/texts';
 
 type MyConversation = Conversation<MyContext>;
 type MyContext = Context & ConversationFlavor;

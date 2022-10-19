@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SignupsEntity } from '../../signups/entities/signups.entity';
 import { addDays, format, parse, subMinutes } from 'date-fns';
-import { CANCEL, CONSTANTS, DIALOGS } from '../../common/constants';
+import { CANCEL, DIALOGS, Texts } from '../../common/texts';
 import {
   choose,
   generateWhatsappLink,
@@ -199,7 +199,7 @@ export class TextsService {
       obj.user.phoneNumber,
     )}">${toG.P3}</a>`;
     const time = format(obj.date, 'kk:mm');
-    return `${toG.P4}: <b>${time}</b>\n${toG.P5}: ${CONSTANTS[obj.type]}\n${
+    return `${toG.P4}: <b>${time}</b>\n${toG.P5}: ${Texts[obj.type]}\n${
       (isAdmin && name) || ''
     }${toG.P6}: ${obj.comment || toG.P7}\n${toG.P8}: ${obj.user.phoneNumber}${
       (isAdmin && nickname) || ''

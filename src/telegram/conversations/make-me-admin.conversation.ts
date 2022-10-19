@@ -3,7 +3,7 @@ import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { config } from '../../common/config';
 import { TelegramUpdate } from '../updates/telegram.update';
 import { RolesEnum } from '../../users-center/enums/roles.enum';
-import { DIALOGS } from '../../common/constants';
+import { DIALOGS } from '../../common/texts';
 
 type MyConversation = Conversation<MyContext>;
 type MyContext = Context & ConversationFlavor;

@@ -6,7 +6,7 @@ import {
   prepareNDaysForOther,
   prepareNTimesForOther,
 } from '../../common/utils';
-import { CANCEL, DIALOGS } from '../../common/constants';
+import { CANCEL, DIALOGS } from '../../common/texts';
 import { menuKeyboard } from '../utility/telegramMenuUtility';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';

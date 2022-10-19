@@ -2,7 +2,7 @@ import { choose } from '../../common/utils';
 import { parse } from 'date-fns';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { Context, Keyboard } from 'grammy';
-import { CANCEL, CONSTANTS, DIALOGS } from '../../common/constants';
+import { CANCEL, DIALOGS, Texts } from '../../common/texts';
 import { ru } from 'date-fns/locale';
 import { confirmKeyboard, menuKeyboard } from '../utility/telegramMenuUtility';
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
@@ -82,7 +82,7 @@ export const consDiagnostic = async (
   }
   const cText = DIALOGS.MEETINGS.CREATE.ALL.WHOLE_TEXT;
 
-  let resText = `${cText.P1}\n${cText.P2} ${CONSTANTS[type]}\n${cText.P3} ${
+  let resText = `${cText.P1}\n${cText.P2} ${Texts[type]}\n${cText.P3} ${
     date.split(' (')[0]
   }\n${cText.P4} ${time}\n${cText.P5} ${phoneNumber}`;
   resText = comment ? `${resText}\n${cText.P6} ${comment}` : resText;
