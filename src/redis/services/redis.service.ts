@@ -1,23 +1,13 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
-import { createClient } from 'redis';
 
 @Injectable()
 export class RedisService {
-  redisManager;
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
-  ) {
-    this.redisManager = createClient({
-      url: 'redis://default:redispw@localhost:49155',
-    });
-    (async () => {
-      console.log(this.redisManager);
-      await this.redisManager.connect();
-    })();
-  }
+  ) {}
 
   async createEvent(obj: {
     telegramId: string;
@@ -30,8 +20,8 @@ export class RedisService {
       // const rrr = await this.set('123312', JSON.stringify(obj), 0);
       // const aaa = await this.getByPattern('');
       // console.log(aaa);
-      await this.redisManager.set('123', '321');
-      const aaa = await this.redisManager.get('');
+      await this.cacheManager.set('123', '321');
+      const aaa = await this.cacheManager.get('123');
       console.log(aaa, 123);
     } catch (e) {
       console.log(e);
