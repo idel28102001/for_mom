@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -16,17 +17,32 @@ export class Config {
     return this.get<string>('NODE_ENV') === 'development';
   }
 
-  get jwtConstants() {
+  get getForGoogle() {
     return {
-      secret: process.env.JWT_SECRET,
+      SCOPES: this.getScopes,
+      TOKEN_PATH: this.getToken,
+      CREDENTIALS_PATH: this.getCredentials,
     };
   }
 
-  get registerJWT() {
-    return {
-      secret: this.jwtConstants.secret,
-      signOptions: { expiresIn: this.get('JWT_SECRET_EXPIRES') },
-    };
+  get getCredentials() {
+    return JSON.parse(process.env.CREDENTIALS);
+  }
+
+  get getSecret() {
+    return process.env.SECRET;
+  }
+
+  get calendarId() {
+    return process.env.CALENDAR_ID;
+  }
+
+  get getToken() {
+    return path.join(process.cwd(), 'token.json');
+  }
+
+  get getScopes() {
+    return 'https://www.googleapis.com/auth/calendar';
   }
 
   public get<T = any>(propertyPath: string, defaultValue?: T) {

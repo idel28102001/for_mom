@@ -7,9 +7,17 @@ import { TelegramProvider } from './telegram.provider';
 import { SignupsModule } from '../signups/signups.module';
 import { UsersCenterModule } from '../users-center/users-center.module';
 import { TelegramTokenEnum } from './enums/tokens/telegram.token.enum';
+import { GoogleModule } from '../google/google.module';
+import { TasksModule } from '../tasks/tasks.module';
+import { MeetingsModule } from '../meetings/meetings.module';
+import { TextsModule } from '../texts/texts.module';
 
 @Module({
   imports: [
+    MeetingsModule,
+    TextsModule,
+    TasksModule,
+    GoogleModule,
     UsersCenterModule,
     SignupsModule,
     ConfigModule.forRoot(),

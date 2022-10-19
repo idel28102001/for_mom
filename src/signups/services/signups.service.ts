@@ -41,40 +41,85 @@ export class SignupsService {
     return this.signupsRepo;
   }
 
-  async checkIfOK(obj: {
-    telegramId: string;
-    date: Date;
-    type: SignupsEnum;
+  async editComment({
+    meetingId,
+    comment,
+  }: {
+    meetingId: number;
     comment: string;
-    phoneNumber: string;
-    duration: number;
   }) {
+    await this.signupsRepo.update({ id: meetingId }, { comment });
+  }
+
+  async getAll(isAdmin: boolean, telegramId: string) {
+    const fromRepo = this.signupsRepo
+      .createQueryBuilder('S')
+      .innerJoin('S.user', 'U')
+      .where('"S".date>now()')
+      .orderBy('S.date', 'ASC')
+      .addSelect([
+        'U.id',
+        'U.phoneNumber',
+        'U.username',
+        'U.firstname',
+        'U.lastname',
+      ]);
+    if (!isAdmin) {
+      fromRepo.andWhere('U.telegramId=:telegramId', { telegramId });
+    }
+    const daysRepo: Array<{ date: string; meetings: Array<SignupsEntity> }> =
+      [];
+    (await fromRepo.getMany()).forEach((e) => {
+      const currentDay = format(e.date, 'yyyy-MM-dd');
+      const day = daysRepo.find((elem) => elem.date === currentDay);
+      if (!day) {
+        daysRepo.push({ date: currentDay, meetings: [e] });
+      } else {
+        day.meetings.push(e);
+      }
+    });
+    return { daysForKeyboard: daysRepo.map((e) => e.date), all: daysRepo };
+  }
+
+  async checkIfOK(obj: { date: Date; duration: number }, meetId = 0) {
     const result = await this.signupsRepo
       .createQueryBuilder('S')
       .where('"S".date>:startDate AND "S".date<:endDate', {
         startDate: subMinutes(obj.date, 1),
         endDate: addMinutes(obj.date, obj.duration - 1),
       })
+      .andWhere('"S".id!=:meetId', { meetId })
       .getCount();
     return !!result;
   }
 
-  async getDays(times: number, startDate: Date) {
-    const dates = await this.getAllDaysWithTimes(startDate);
+  async getDays(
+    times: number,
+    startDate: Date,
+    dateToFilter = subMinutes(new Date(), 30),
+  ) {
+    const dates = await this.getAllDaysWithTimes(
+      startDate,
+      times,
+      dateToFilter,
+    );
     const all: Array<{ day: string; times: Array<{ date: Date }> }> = [];
     Array.from(dates.keys()).forEach((e) => {
       const current = dates.get(e).sort((a, b) => compareDesc(a.date, b.date));
-      let curr: Array<{ date: Date; test: string; access: number }> = [
-        { date: current[0].date, test: current[0].test, access: 30 },
+      if (!current.length) {
+        return;
+      }
+      let curr: Array<{ date: Date; access: number }> = [
+        { date: current[0].date, access: 30 },
       ];
       let i = 1;
       let prevTime = curr[0].date;
       while (i < current.length) {
-        const { date, test } = current[i];
+        const { date } = current[i];
         if (compareAsc(subMinutes(prevTime, 30), date) === 0) {
-          curr.push({ date, test, access: curr[i - 1].access + 30 });
+          curr.push({ date, access: curr[i - 1].access + 30 });
         } else {
-          curr.push({ date, test, access: 30 });
+          curr.push({ date, access: 30 });
         }
         prevTime = curr[i].date;
         i++;
@@ -92,17 +137,28 @@ export class SignupsService {
     return all;
   }
 
-  async getAllDaysWithTimes(startDate: Date) {
+  async getAllDaysWithTimes(
+    startDate: Date,
+    times: number,
+    dateToFilter: Date,
+  ) {
     const all = (await this.signupsRepo.query(funt(startDate))) as Array<{
       date: Date;
       duration: null | string;
     }>;
+    const day = all.find(
+      (e) =>
+        format(e.date, 'yyyy-MM-dd kk:mm') ===
+        format(dateToFilter, 'yyyy-MM-dd kk:mm'),
+    );
+    if (day) {
+      day.duration = null;
+    }
     const dates: Map<
       string,
       Array<{
         date: Date;
         duration: null | string;
-        test: string;
         access: number;
       }>
     > = new Map();
@@ -111,6 +167,7 @@ export class SignupsService {
     dates.set(firstDate, []);
     let someToPass = first.duration ? Number(first.duration) / 30 : 0;
     let i = 0;
+    let sum = 0;
     while (i < all.length) {
       const { date, duration } = all[i];
       if (someToPass) {
@@ -121,14 +178,16 @@ export class SignupsService {
       const currentDate = format(date, 'yyyy-MM-dd');
       if (currentDate === firstDate) {
         if (!duration) {
-          dates
-            .get(firstDate)
-            .push({ date, duration, test: format(date, 'kk:mm'), access: 0 });
+          dates.get(firstDate).push({ date, duration, access: 0 });
         } else {
+          sum += Number(duration);
           someToPass = duration ? Number(duration) / 30 - 1 : 0;
         }
         i++;
       } else {
+        if (sum > 60 * 8 - times) {
+          dates.delete(firstDate);
+        }
         someToPass = duration ? Number(duration) / 30 - 1 : 0;
         firstDate = currentDate;
         dates.set(firstDate, []);
@@ -143,6 +202,7 @@ export class SignupsService {
       type: SignupsEnum;
       comment: string;
       duration: number;
+      calendarEventId: string;
     },
     user: UsersCenterEntity,
   ) {
@@ -163,25 +223,6 @@ export class SignupsService {
   async find(options?: FindManyOptions<SignupsEntity>) {
     return await this.signupsRepo.find(options);
   }
-
-  // async uploadTimes(
-  //   array: Array<string>,
-  //   dateWhole: string,
-  //   type: SignupsEnum,
-  // ) {
-  //   const oldOnes = await this.signupsRepo.find({
-  //     where: { date: MoreThan(dateWhole) as any },
-  //     relations: ['user'],
-  //   });
-  //   const messageId = oldOnes.length ? oldOnes[0].messageId : null;
-  //   const result = array.map((e) => {
-  //     const date = new Date(`${dateWhole} ${e}`);
-  //     return this.create({ date, type, messageId }) as any as SignupsEntity;
-  //   });
-  //   const dates = orderEntTimes([...result, ...oldOnes]);
-  //   return { dates, messageId };
-  //   // return await this.save(result);
-  // }
 
   async save(elems) {
     return await this.signupsRepo.save(elems);

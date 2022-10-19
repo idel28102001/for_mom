@@ -31,8 +31,8 @@ export class UsersCenterEntity {
   @Column({ nullable: true })
   lastname: string;
 
-  @Column({ default: RolesEnum.USER })
-  role: string;
+  @Column({ default: RolesEnum.USER, type: 'enum', enum: RolesEnum })
+  role: RolesEnum;
 
   @OneToMany(() => SignupsEntity, (signups) => signups.user)
   signups: SignupsEntity[];

@@ -3,6 +3,7 @@ import { UsersCenterTokenEnum } from '../enums/tokens/users-center.token.enum';
 import { Repository } from 'typeorm';
 import { UsersCenterEntity } from '../entities/users.entity';
 import { User } from '@grammyjs/types';
+import { RolesEnum } from '../enums/roles.enum';
 
 @Injectable()
 export class UsersCenterService {
@@ -13,6 +14,23 @@ export class UsersCenterService {
 
   get repo() {
     return this.usersCenterRepo;
+  }
+
+  async editPhoneNumber({
+    telegramId,
+    phoneNumber,
+  }: {
+    telegramId: string;
+    phoneNumber: string;
+  }) {
+    return await this.usersCenterRepo.update({ telegramId }, { phoneNumber });
+  }
+
+  async makeAdmin(telegramId: string) {
+    return await this.usersCenterRepo.update(
+      { telegramId },
+      { role: RolesEnum.ADMIN },
+    );
   }
 
   async saveToDBUser(obj: User) {

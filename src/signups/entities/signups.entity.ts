@@ -21,4 +21,7 @@ export class SignupsEntity {
 
   @Column({ type: 'numeric' })
   duration: number;
+
+  @Column()
+  calendarEventId: string;
 }

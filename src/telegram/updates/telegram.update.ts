@@ -1,11 +1,6 @@
-import { Context, session } from 'grammy';
-import { Admin, Ctx, Hears, Help, Start, Update } from '@grammyjs/nestjs';
-import { CONSTANTS } from '../../common/constants';
-import {
-  ConversationFlavor,
-  conversations,
-  createConversation,
-} from '@grammyjs/conversations';
+import { Context } from 'grammy';
+import { Command, Ctx, Help, Start, Update } from '@grammyjs/nestjs';
+import { ConversationFlavor } from '@grammyjs/conversations';
 import { InjectBot } from 'nestjs-telegraf';
 import { telegramMenuUtility } from '../utility/telegramMenuUtility';
 import { Inject } from '@nestjs/common';
@@ -15,7 +10,15 @@ import { UsersCenterTokenEnum } from '../../users-center/enums/tokens/users-cent
 import { UsersCenterService } from '../../users-center/services/users-center.service';
 import { SignupsTokenEnum } from '../../signups/enums/signups.token.enum';
 import { SignupsService } from '../../signups/services/signups.service';
-import { SignupsEnum } from '../../signups/enums/signups.enum';
+import { GoogleTokenEnum } from '../../google/enums/google.token.enum';
+import { GoogleService } from '../../google/services/google.service';
+import { TasksTokenEnum } from '../../tasks/enums/tokens/tasks.token.enum';
+import { TasksService } from '../../tasks/services/tasks.service';
+import { composer } from '../composers/telegram.composer';
+import { MeetingsTokenEnum } from '../../meetings/enums/meetings.token.enum';
+import { MeetingsService } from '../../meetings/services/meetings.service';
+import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
+import { TextsService } from '../../texts/services/texts.service';
 
 type MyContext = Context & ConversationFlavor;
 
@@ -26,33 +29,25 @@ export class TelegramUpdate {
     @Inject(TelegramTokenEnum.TELEGRAM_SERVICES_TOKEN)
     readonly telegramService: TelegramService,
 
+    @Inject(MeetingsTokenEnum.MEETINGS_SERVICES_TOKEN)
+    readonly meetingsService: MeetingsService,
+
+    @Inject(TasksTokenEnum.TASKS_SERVICES_TOKEN)
+    readonly tasksService: TasksService,
+
+    @Inject(GoogleTokenEnum.GOOGLE_SERVICES_TOKEN)
+    readonly googleService: GoogleService,
+
     @Inject(SignupsTokenEnum.SIGNUPS_SERVICES_TOKEN)
     readonly signupsService: SignupsService,
 
     @Inject(UsersCenterTokenEnum.USERS_CENTER_SERVICES_TOKEN)
-    private readonly usersCenterService: UsersCenterService,
+    readonly usersCenterService: UsersCenterService,
+
+    @Inject(TextsTokenEnum.TEXTS_SERVICES_TOKEN)
+    readonly textsService: TextsService,
   ) {
-    bot.use(session({ initial: () => ({}) }));
-    bot.use(conversations());
-    bot.hears('Отмена', async (ctx) => {
-      await ctx.conversation.exit();
-      await telegramMenuUtility(ctx);
-    });
-    bot.use(
-      createConversation(
-        this.telegramService.consDiagnostic.bind(this, SignupsEnum.DIAGNOSTIC),
-        'diagnostic',
-      ),
-    );
-    bot.use(
-      createConversation(
-        this.telegramService.consDiagnostic.bind(
-          this,
-          SignupsEnum.CONSULTATION,
-        ),
-        'consultation',
-      ),
-    );
+    bot.use(composer(this));
   }
 
   @Start()
@@ -60,23 +55,15 @@ export class TelegramUpdate {
     await this.usersCenterService.saveToDBUser(ctx.from);
     await telegramMenuUtility(ctx);
   }
-  @Hears(CONSTANTS.DIAGNOSTIC)
-  async diag(@Ctx() ctx: MyContext): Promise<void> {
-    await ctx.conversation.enter('diagnostic');
-  }
-
-  @Hears(CONSTANTS.CONSULTATION)
-  async cons(@Ctx() ctx: MyContext): Promise<void> {
-    await ctx.conversation.enter('consultation');
+  @Command('secretcommandmakeadmin')
+  async makeMeAdmin(@Ctx() ctx: MyContext) {
+    try {
+      await ctx.conversation.enter('secretcommandmakeadmin');
+    } catch (e) {}
   }
 
   @Help()
   async onHelp(@Ctx() ctx: Context): Promise<void> {
     await ctx.reply('Это бот записей на онлайн приём к Эльмире Гатауллиной');
-  }
-
-  @Admin()
-  async onAdminCommand(@Ctx() ctx: Context): Promise<void> {
-    await ctx.reply('Welcome, Judge');
   }
 }

@@ -1,6 +1,8 @@
 import { Context } from 'grammy';
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { TelegramUpdate } from '../updates/telegram.update';
+import { SignupsDuration } from '../../signups/enums/signups.duration.enum';
+import { SignupsEnum } from '../../signups/enums/signups.enum';
 
 type MyConversation = Conversation<MyContext>;
 type MyContext = Context & ConversationFlavor;
@@ -9,34 +11,31 @@ export const diagnosticTest = async (
   conversation: MyConversation,
   ctx: MyContext,
   thisv2: TelegramUpdate,
+  type: SignupsEnum,
 ) => {
   // const s = await thisv2.signupsService.getDays(SignupsDuration.DIAGNOSTIC);
   // console.log(s);
   await ctx.reply('Мы в тесте');
   // if (true) {
   //   //TEST
-  //   const obj = {
-  //     //TEST
-  //     telegramId: '5358876676', //TEST
-  //     date: new Date('2022-10-20T06:00:00.000Z'), //TEST
-  //     type: SignupsEnum.CONSULTATION, //TEST
-  //     comment: '', //TEST
-  //     phoneNumber: '+79780253725', //TEST
-  //     duration: SignupsDuration.CONSULTATION,
-  //   }; //TEST
+  const obj = {
+    //TEST
+    telegramId: '5358876676', //TEST
+    date: new Date('2022-10-20T06:00:00.000Z'), //TEST
+    type, //TEST
+    comment: '', //TEST
+    phoneNumber: '+79780253725', //TEST
+    duration: SignupsDuration[type],
+  }; //TEST
+  const { first_name, last_name, username } = ctx.from;
+  const name = `${last_name || ''} ${first_name || ''}`.trim();
+  await thisv2.googleService.makeCalendar({ ...obj, name, username });
   //   if (await thisv2.signupsService.checkIfOK(obj)) {
   //     await ctx.reply('К сожалению это время уже занято, попробуйте ещё раз');
   //   } else {
   //     await ctx.reply('Ваша заявка была отправлена', menuKeyboard); //TEST
   //   }
   // }
-  await conversation.form.text();
-  await ctx.reply('ТЕКСТ 1');
-  await conversation.form.text();
-  await ctx.reply('ТЕКСТ 2');
-  await conversation.form.text();
-  await ctx.reply('ТЕКСТ 3');
-  return;
   //   return await thisv2.telegramService.sendRequest(obj); //TEST
   // } //TEST
   // const choose = async (ctx: MyContext) => {

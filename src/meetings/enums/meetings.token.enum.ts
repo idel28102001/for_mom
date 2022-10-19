@@ -1,0 +1,3 @@
+export enum MeetingsTokenEnum {
+  MEETINGS_SERVICES_TOKEN = 'MEETINGS_SERVICES_TOKEN',
+}
