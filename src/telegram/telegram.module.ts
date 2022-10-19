@@ -11,10 +11,12 @@ import { GoogleModule } from '../google/google.module';
 import { TasksModule } from '../tasks/tasks.module';
 import { MeetingsModule } from '../meetings/meetings.module';
 import { TextsModule } from '../texts/texts.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
     MeetingsModule,
+    RedisModule,
     TextsModule,
     TasksModule,
     GoogleModule,

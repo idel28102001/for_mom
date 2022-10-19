@@ -9,6 +9,7 @@ import { GoogleModule } from './google/google.module';
 import { TasksModule } from './tasks/tasks.module';
 import { MeetingsModule } from './meetings/meetings.module';
 import { TextsModule } from './texts/texts.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TextsModule } from './texts/texts.module';
     TasksModule,
     MeetingsModule,
     TextsModule,
+    RedisModule,
   ],
   controllers: [],
   providers: [],

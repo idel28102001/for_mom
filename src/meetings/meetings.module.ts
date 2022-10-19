@@ -6,12 +6,14 @@ import { SignupsModule } from '../signups/signups.module';
 import { MeetingsTokenEnum } from './enums/meetings.token.enum';
 import { TasksModule } from '../tasks/tasks.module';
 import { TextsModule } from '../texts/texts.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
     GoogleModule,
     UsersCenterModule,
     SignupsModule,
+    RedisModule,
     TasksModule,
     TextsModule,
   ],

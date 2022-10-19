@@ -7,11 +7,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from '../common/config';
 import { TasksTokenEnum } from './enums/tokens/tasks.token.enum';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SignupsModule } from '../signups/signups.module';
+import { TextsModule } from '../texts/texts.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     DatabaseModule,
+    SignupsModule,
+    TextsModule,
     UsersCenterModule,
     NestjsGrammyModule.forRootAsync({
       imports: [ConfigModule],

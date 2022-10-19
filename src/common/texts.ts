@@ -1,3 +1,5 @@
+import { subHours, subMinutes } from 'date-fns';
+
 export enum Texts {
   CONSULTATION = '💎Консультация💎',
   DIAGNOSTIC = '💫Диагностика💫',
@@ -19,6 +21,26 @@ export const DIALOGS = {
     TRY: 'К сожалению это время уже занято, попробуйте ещё раз',
   },
   MEETINGS: {
+    FUTURE: {
+      A1: 'у вас состоится',
+      A2: 'Завтра',
+      A3: 'Сегодня',
+      A4: 'в',
+      A5: {
+        date(date: Date) {
+          return subHours(date, 2);
+          // return addSeconds(new Date(), 10);
+        },
+        text: 'Через 2 часа',
+      },
+      A6: {
+        date(date: Date) {
+          return subMinutes(date, 15);
+          // return addSeconds(new Date(), 10);
+        },
+        text: 'Через 15 минут',
+      },
+    },
     DAYS: {
       A1: 'Пока у вас нет встреч',
       Q1: 'Выберите день встреч',

@@ -19,6 +19,8 @@ import { MeetingsTokenEnum } from '../../meetings/enums/meetings.token.enum';
 import { MeetingsService } from '../../meetings/services/meetings.service';
 import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
+import { RedisTokenEnum } from '../../redis/enums/tokens/redis.token.enum';
+import { RedisService } from '../../redis/services/redis.service';
 
 type MyContext = Context & ConversationFlavor;
 
@@ -37,6 +39,9 @@ export class TelegramUpdate {
 
     @Inject(GoogleTokenEnum.GOOGLE_SERVICES_TOKEN)
     readonly googleService: GoogleService,
+
+    @Inject(RedisTokenEnum.REDIS_SERVICES_TOKEN)
+    readonly redisService: RedisService,
 
     @Inject(SignupsTokenEnum.SIGNUPS_SERVICES_TOKEN)
     readonly signupsService: SignupsService,

@@ -13,6 +13,7 @@ import { SignupsEntity } from '../../signups/entities/signups.entity';
 import { CANCEL, DIALOGS } from '../../common/texts';
 import { MyContext, sliceIntoChunks } from '../../common/utils';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
+import { format } from 'date-fns';
 
 @Injectable()
 export class MeetingsService {
@@ -30,7 +31,18 @@ export class MeetingsService {
   ) {}
 
   async editMeeting({ date, meet }: { date: Date; meet: SignupsEntity }) {
+    const { user } = await this.signupsService.repo
+      .createQueryBuilder('S')
+      .innerJoin('S.user', 'U')
+      .select(['S.id', 'U.id', 'U.telegramId'])
+      .getOne();
+
     await this.signupsService.repo.update({ id: meet.id }, { date: meet.date });
+    await this.tasksService.editEvent(format(meet.date, 'yyyy-MM-dd kk:mm'), {
+      telegramId: user.telegramId,
+      date: meet.date,
+      type: meet.type,
+    });
     await this.googleService.editEvent({
       calendarEventId: meet.calendarEventId,
       date,
@@ -68,17 +80,29 @@ export class MeetingsService {
       { ...obj, calendarEventId: eventId },
       user,
     );
+    await this.tasksService.createEvent(
+      {
+        telegramId: user.telegramId,
+        date: signup.date,
+        type: signup.type,
+      },
+      1,
+    );
     await this.signupsService.repo.save(signup);
   }
 
   async deleteMeeting(meetingId: number) {
-    const user = await this.signupsService.repo.findOne({
+    const sign = await this.signupsService.repo.findOne({
       where: { id: meetingId },
     });
     try {
-      await this.googleService.deleteEvent(user.calendarEventId);
+      await this.googleService.deleteEvent(sign.calendarEventId);
     } catch (e) {}
-    await this.signupsService.repo.remove(user);
+
+    try {
+      this.tasksService.deleteEvent(format(sign.date, 'yyyy-MM-dd kk:mm'));
+    } catch (e) {}
+    await this.signupsService.repo.remove(sign);
     return true;
   }
 

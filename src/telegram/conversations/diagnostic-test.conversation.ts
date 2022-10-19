@@ -26,10 +26,17 @@ export const diagnosticTest = async (
     comment: '', //TEST
     phoneNumber: '+79780253725', //TEST
     duration: SignupsDuration[type],
-  }; //TEST
-  const { first_name, last_name, username } = ctx.from;
-  const name = `${last_name || ''} ${first_name || ''}`.trim();
-  await thisv2.googleService.makeCalendar({ ...obj, name, username });
+  };
+  await thisv2.redisService.createEvent({
+    telegramId: obj.telegramId,
+    date: obj.date,
+    type: obj.type,
+    stage: 1,
+  });
+  //TEST
+  // const { first_name, last_name, username } = ctx.from;
+  // const name = `${last_name || ''} ${first_name || ''}`.trim();
+  // await thisv2.googleService.makeCalendar({ ...obj, name, username });
   //   if (await thisv2.signupsService.checkIfOK(obj)) {
   //     await ctx.reply('К сожалению это время уже занято, попробуйте ещё раз');
   //   } else {

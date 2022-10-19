@@ -8,7 +8,6 @@ import { SignupsTokenEnum } from '../../signups/enums/signups.token.enum';
 import { SignupsService } from '../../signups/services/signups.service';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { TelegramUpdate } from '../updates/telegram.update';
-import { consDiagnostic } from '../conversations/cons-diagnostic.conversation';
 import { makeMeAdmin } from '../conversations/make-me-admin.conversation';
 import { allMeets } from '../conversations/all-meets.conversation';
 import { RolesEnum } from '../../users-center/enums/roles.enum';
@@ -18,6 +17,7 @@ import { cancelMeet } from '../conversations/cancel-meet.conversation';
 import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { editMeet } from '../conversations/edit-meet.conversation';
+import { diagnosticTest } from '../conversations/diagnostic-test.conversation';
 
 type MyContext = Context & ConversationFlavor;
 type MyConversation = Conversation<MyContext>;
@@ -86,17 +86,17 @@ export class TelegramService {
     conversation: MyConversation,
     ctx: MyContext,
   ) {
-    // return diagnosticTest(
-    //   conversation,
-    //   ctx,
-    //   this as unknown as TelegramUpdate,
-    //   type,
-    // );
-    return consDiagnostic(
+    return diagnosticTest(
       conversation,
       ctx,
       this as unknown as TelegramUpdate,
       type,
     );
+    // return consDiagnostic(
+    //   conversation,
+    //   ctx,
+    //   this as unknown as TelegramUpdate,
+    //   type,
+    // );
   }
 }
