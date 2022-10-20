@@ -9,7 +9,6 @@ import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { RolesEnum } from '../../users-center/enums/roles.enum';
 import { addDays, compareAsc, format, formatRelative } from 'date-fns';
-import { menuKeyboard } from '../../telegram/utility/telegramMenuUtility';
 import { ru } from 'date-fns/locale';
 import { DIALOGS } from '../../common/texts';
 import { SignupsNamesEnum } from '../../signups/enums/signups-names.enum';
@@ -197,7 +196,6 @@ export class TasksService {
         }
         await this.bot.api
           .sendMessage(Number(e.telegramId), text, {
-            ...menuKeyboard,
             parse_mode: 'HTML',
             disable_web_page_preview: true,
           })
@@ -238,7 +236,6 @@ export class TasksService {
       users.map(async (user) => {
         await this.bot.api
           .sendMessage(Number(user.telegramId), text, {
-            ...menuKeyboard,
             parse_mode: 'HTML',
             disable_web_page_preview: true,
           })
