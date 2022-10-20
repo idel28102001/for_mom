@@ -50,10 +50,10 @@ export const choose = async (ctx: MyContext) => {
   await ctx.reply('Выберите пункт из предложенных вариантов');
 };
 
-export const generateWhatsappLink = (phone: string) => {
+export const generateWhatsappLink = (phone: string, type: string) => {
   return `https://api.whatsapp.com/send?phone=${phone.slice(
     1,
-  )}&text=Привет%2C у нас с тобой сейчас консультация`;
+  )}&text=Привет%2C у нас с тобой сейчас ${type}`;
 };
 
 export const prepareNDaysForOther = (

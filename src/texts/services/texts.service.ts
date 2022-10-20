@@ -16,6 +16,7 @@ import { SignupsDuration } from '../../signups/enums/signups.duration.enum';
 import { TelegramUpdate } from '../../telegram/updates/telegram.update';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { ru } from 'date-fns/locale';
+import { SignupsNamesEnum } from '../../signups/enums/signups-names.enum';
 
 @Injectable()
 export class TextsService {
@@ -197,6 +198,7 @@ export class TextsService {
     name = name ? `${toG.P2}: ${name}\n` : '';
     const whatsapp = `Whatsapp: <a href="${generateWhatsappLink(
       obj.user.phoneNumber,
+      SignupsNamesEnum[obj.type],
     )}">${toG.P3}</a>`;
     const time = format(obj.date, 'kk:mm');
     return `${toG.P4}: <b>${time}</b>\n${toG.P5}: ${Texts[obj.type]}\n${
