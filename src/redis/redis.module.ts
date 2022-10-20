@@ -16,7 +16,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         store: redisStore,
         host: configService.get('REDIS_HOST'),
         port: configService.get('REDIS_PORT'),
-        ttl: 0,
+        // ttl: 5,
       }),
     }),
     // CacheModule.register<ClientOpts>({

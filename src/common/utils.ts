@@ -2,12 +2,18 @@ import { format } from 'date-fns';
 
 import { SignupsEntity } from '../signups/entities/signups.entity';
 import { ru } from 'date-fns/locale';
-import { Context } from 'grammy';
+import { Context, SessionFlavor } from 'grammy';
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { CANCEL } from './texts';
+import { RolesEnum } from '../users-center/enums/roles.enum';
 
+export interface SessionData {
+  role: RolesEnum;
+}
 export type MyConversation = Conversation<MyContext>;
-export type MyContext = Context & ConversationFlavor;
+export type MyContext = Context &
+  ConversationFlavor &
+  SessionFlavor<SessionData | any>;
 
 export const sliceIntoChunks = <T>(
   arr: Array<T>,

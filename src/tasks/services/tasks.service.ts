@@ -8,13 +8,15 @@ import { SignupsService } from '../../signups/services/signups.service';
 import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { RolesEnum } from '../../users-center/enums/roles.enum';
-import { addDays, format, formatRelative } from 'date-fns';
+import { addDays, compareAsc, format, formatRelative } from 'date-fns';
 import { menuKeyboard } from '../../telegram/utility/telegramMenuUtility';
 import { ru } from 'date-fns/locale';
 import { DIALOGS } from '../../common/texts';
 import { SignupsNamesEnum } from '../../signups/enums/signups-names.enum';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { CronJob } from 'cron';
+import { RedisTokenEnum } from '../../redis/enums/tokens/redis.token.enum';
+import { RedisService } from '../../redis/services/redis.service';
 
 @Injectable()
 export class TasksService {
@@ -29,7 +31,24 @@ export class TasksService {
 
     @Inject(SignupsTokenEnum.SIGNUPS_SERVICES_TOKEN)
     private readonly signupsService: SignupsService,
-  ) {}
+
+    @Inject(RedisTokenEnum.REDIS_SERVICES_TOKEN)
+    private readonly redisService: RedisService,
+  ) {
+    (async () => {
+      const allKeys = await this.redisService.getAll();
+      await Promise.all(
+        allKeys.map(async (key) => {
+          if (compareAsc(new Date(), new Date(key)) !== -1) {
+            return;
+          }
+          const currObj = await this.redisService.get<string>(key);
+          const obj = JSON.parse(currObj);
+          await this.createEvent(obj, obj.stage);
+        }),
+      );
+    })();
+  }
 
   async editEvent(
     id: string,
@@ -39,11 +58,18 @@ export class TasksService {
       type: SignupsEnum;
     },
   ) {
-    this.deleteEvent(id);
-    await this.createEvent(obj, 1);
+    const stage = 1;
+    await this.redisService.editEvent(
+      id,
+      format(obj.date, 'yyyy-MM-dd kk:mm'),
+      { ...obj, stage },
+    );
+    await this.deleteEvent(id);
+    await this.createEvent(obj, stage);
   }
 
-  deleteEvent(id: string) {
+  async deleteEvent(id: string) {
+    await this.redisService.del(id);
     this.schedulerRegistry.deleteCronJob(id);
   }
 
@@ -55,6 +81,8 @@ export class TasksService {
     },
     stage = 1,
   ) {
+    obj.date = new Date(obj.date);
+    const currName = format(obj.date, 'yyyy-MM-dd kk:mm');
     const curr = DIALOGS.MEETINGS.FUTURE;
     let date: Date = undefined;
     let currText = '';
@@ -75,16 +103,29 @@ export class TasksService {
         )
         .catch((e) => {});
       if (stage === 1) {
-        this.schedulerRegistry.deleteCronJob(
-          format(obj.date, 'yyyy-MM-dd kk:mm'),
-        );
-        return await this.createEvent(obj, 2);
+        await this.redisService.editEvent(currName, currName, {
+          ...obj,
+          stage: 2,
+        });
+        this.schedulerRegistry.deleteCronJob(currName);
+        await this.createEvent(obj, 2);
       }
     });
-    const eventName = format(obj.date, 'yyyy-MM-dd kk:mm');
-    this.schedulerRegistry.addCronJob(eventName, job);
+    await this.redisService.editEvent(currName, currName, { ...obj, stage });
+    await this.createIfCan(currName, job);
+    return currName;
+  }
+
+  async createIfCan(name: string, job: CronJob) {
+    try {
+      this.schedulerRegistry.getCronJob(name);
+    } catch (e) {
+      this.schedulerRegistry.addCronJob(name, job);
+    } finally {
+      this.schedulerRegistry.deleteCronJob(name);
+      this.schedulerRegistry.addCronJob(name, job);
+    }
     job.start();
-    return eventName;
   }
 
   @Cron('0 0 23 * * *', { name: 'notification_1', timeZone: 'Europe/Moscow' })
@@ -161,7 +202,6 @@ export class TasksService {
           .catch((e) => {});
       }),
     );
-    console.log(users, 123312);
   }
 
   async handleCron(plusDays = 0) {

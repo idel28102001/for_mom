@@ -9,6 +9,7 @@ import { TasksTokenEnum } from './enums/tokens/tasks.token.enum';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SignupsModule } from '../signups/signups.module';
 import { TextsModule } from '../texts/texts.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TextsModule } from '../texts/texts.module';
     DatabaseModule,
     SignupsModule,
     TextsModule,
+    RedisModule,
     UsersCenterModule,
     NestjsGrammyModule.forRootAsync({
       imports: [ConfigModule],

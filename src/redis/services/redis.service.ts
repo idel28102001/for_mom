@@ -1,6 +1,8 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
+import { differenceInSeconds } from 'date-fns';
+import { DIALOGS } from '../../common/texts';
 
 @Injectable()
 export class RedisService {
@@ -9,26 +11,44 @@ export class RedisService {
     private readonly cacheManager: Cache,
   ) {}
 
-  async createEvent(obj: {
-    telegramId: string;
-    date: Date;
-    type: SignupsEnum;
-    stage: number;
-  }) {
-    try {
-      // console.log(123, format(obj.date, 'yyyy-MM-dd kk:mm'));
-      // const rrr = await this.set('123312', JSON.stringify(obj), 0);
-      // const aaa = await this.getByPattern('');
-      // console.log(aaa);
-      // await this.cacheManager.set('333', '333', 0);
-      const aaa = await this.cacheManager.get('333');
-      console.log(aaa, 123);
-    } catch (e) {
-      console.log(e);
-    }
+  async createEvent(
+    name: string,
+    obj: {
+      telegramId: string;
+      date: Date;
+      type: SignupsEnum;
+      stage: number;
+    },
+    ttl: number,
+  ) {
+    return await this.set(name, JSON.stringify(obj), ttl);
   }
 
-  async get<T>(key: string): Promise<T | void> {
+  async editEvent(
+    name: string,
+    newName: string,
+    obj: {
+      telegramId: string;
+      date: Date;
+      type: SignupsEnum;
+      stage: number;
+    },
+  ) {
+    const curr = DIALOGS.MEETINGS.FUTURE;
+    const date =
+      obj.stage === 1 ? curr.A5.date(obj.date) : curr.A6.date(obj.date);
+    const ttl =
+      differenceInSeconds(obj.date, date, { roundingMethod: 'ceil' }) + 60;
+
+    await this.del(name);
+    await this.createEvent(name, obj, ttl);
+  }
+
+  async getAll(): Promise<Array<string>> {
+    return await this.cacheManager.store.keys();
+  }
+
+  async get<T>(key: string): Promise<T> {
     return await this.cacheManager.get<T>(key);
   }
 
@@ -37,9 +57,7 @@ export class RedisService {
   }
 
   async set<T>(key: string, value: T, ttl?: number): Promise<T | void> {
-    return await this.cacheManager.set(key, value, {
-      ttl,
-    } as unknown as number);
+    await this.cacheManager.set(key, value, { ttl });
   }
 
   async del(key: string): Promise<void> {

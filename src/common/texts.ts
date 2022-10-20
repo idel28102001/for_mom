@@ -29,14 +29,12 @@ export const DIALOGS = {
       A5: {
         date(date: Date) {
           return subHours(date, 2);
-          // return addSeconds(new Date(), 10);
         },
         text: 'Через 2 часа',
       },
       A6: {
         date(date: Date) {
           return subMinutes(date, 15);
-          // return addSeconds(new Date(), 10);
         },
         text: 'Через 15 минут',
       },

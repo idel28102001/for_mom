@@ -1,13 +1,14 @@
-import { Context } from 'grammy';
-import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { TelegramUpdate } from '../updates/telegram.update';
-import { choose, prepareNDaysForOther } from '../../common/utils';
+import {
+  choose,
+  MyContext,
+  MyConversation,
+  prepareNDaysForOther,
+} from '../../common/utils';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { DIALOGS } from '../../common/texts';
-
-type MyConversation = Conversation<MyContext>;
-type MyContext = Context & ConversationFlavor;
+import { RolesEnum } from '../../users-center/enums/roles.enum';
 
 const allMeetings = async (
   conversation: MyConversation,
@@ -62,9 +63,7 @@ export const allMeets = async (
   ctx: MyContext,
   thisv2: TelegramUpdate,
 ) => {
-  const isAdmin = await conversation.external(async () => {
-    return await thisv2.telegramService.ifAdmin(ctx);
-  });
+  const isAdmin = ctx.session.role === RolesEnum.ADMIN;
   if (isAdmin) {
     return await allMeetings(conversation, ctx, thisv2, true);
   } else {

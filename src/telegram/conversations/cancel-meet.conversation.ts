@@ -10,6 +10,7 @@ import { CANCEL, DIALOGS } from '../../common/texts';
 import { menuKeyboard } from '../utility/telegramMenuUtility';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { RolesEnum } from '../../users-center/enums/roles.enum';
 
 const cancel = async (
   conversation: MyConversation,
@@ -84,9 +85,7 @@ export const cancelMeet = async (
   ctx: MyContext,
   thisv2: TelegramUpdate,
 ) => {
-  const isAdmin = await conversation.external(async () => {
-    return await thisv2.telegramService.ifAdmin(ctx);
-  });
+  const isAdmin = ctx.session.role === RolesEnum.ADMIN;
   if (isAdmin) {
     return await cancel(conversation, ctx, thisv2, true);
   } else {

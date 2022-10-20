@@ -8,12 +8,33 @@ import {
 import { telegramMenuUtility } from '../utility/telegramMenuUtility';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { CANCEL, Texts } from '../../common/texts';
+import { MyContext, SessionData } from '../../common/utils';
+import { RolesEnum } from '../../users-center/enums/roles.enum';
 
 export const composer = (thisv2: TelegramUpdate) => {
   const composer = new Composer<
-    Context & SessionFlavor<Record<string, never>> & ConversationFlavor
+    Context & SessionFlavor<SessionData | any> & ConversationFlavor
   >();
-  composer.use(session({ initial: () => ({}) }));
+  composer.use(
+    session({
+      initial: () => ({ role: undefined }),
+    }),
+  );
+  composer.use(async (ctx: MyContext, next) => {
+    if (!ctx.session.role) {
+      const user = await thisv2.usersCenterService.repo.findOne({
+        where: { telegramId: ctx.from.id.toString() },
+        select: ['id', 'role'],
+      });
+      if (user) {
+        ctx.session.role = user.role;
+      } else {
+        await thisv2.usersCenterService.saveToDBUser(ctx.from);
+        ctx.session.role = RolesEnum.USER;
+      }
+    }
+    await next();
+  });
   composer.use(conversations());
   composer.hears(CANCEL, async (ctx) => {
     await ctx.conversation.exit();

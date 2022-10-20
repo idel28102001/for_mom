@@ -17,7 +17,7 @@ import { cancelMeet } from '../conversations/cancel-meet.conversation';
 import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { editMeet } from '../conversations/edit-meet.conversation';
-import { diagnosticTest } from '../conversations/diagnostic-test.conversation';
+import { consDiagnostic } from '../conversations/cons-diagnostic.conversation';
 
 type MyContext = Context & ConversationFlavor;
 type MyConversation = Conversation<MyContext>;
@@ -86,17 +86,17 @@ export class TelegramService {
     conversation: MyConversation,
     ctx: MyContext,
   ) {
-    return diagnosticTest(
-      conversation,
-      ctx,
-      this as unknown as TelegramUpdate,
-      type,
-    );
-    // return consDiagnostic(
+    // return diagnosticTest(
     //   conversation,
     //   ctx,
     //   this as unknown as TelegramUpdate,
     //   type,
     // );
+    return consDiagnostic(
+      conversation,
+      ctx,
+      this as unknown as TelegramUpdate,
+      type,
+    );
   }
 }

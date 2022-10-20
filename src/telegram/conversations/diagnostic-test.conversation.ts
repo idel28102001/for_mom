@@ -21,18 +21,20 @@ export const diagnosticTest = async (
   const obj = {
     //TEST
     telegramId: '5358876676', //TEST
-    date: new Date('2022-10-20T06:00:00.000Z'), //TEST
+    date: new Date('2022-10-21T06:00:00.000Z'), //TEST
     type, //TEST
     comment: '', //TEST
     phoneNumber: '+79780253725', //TEST
     duration: SignupsDuration[type],
   };
-  await thisv2.redisService.createEvent({
-    telegramId: obj.telegramId,
-    date: obj.date,
-    type: obj.type,
-    stage: 1,
-  });
+  await thisv2.tasksService.createEvent(
+    {
+      telegramId: obj.telegramId,
+      date: obj.date,
+      type: obj.type,
+    },
+    1,
+  );
   //TEST
   // const { first_name, last_name, username } = ctx.from;
   // const name = `${last_name || ''} ${first_name || ''}`.trim();
