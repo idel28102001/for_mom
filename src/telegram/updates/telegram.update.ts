@@ -1,5 +1,5 @@
 import { Context } from 'grammy';
-import { Command, Ctx, Help, Start, Update } from '@grammyjs/nestjs';
+import { Ctx, Help, Start, Update } from '@grammyjs/nestjs';
 import { ConversationFlavor } from '@grammyjs/conversations';
 import { InjectBot } from 'nestjs-telegraf';
 import { telegramMenuUtility } from '../utility/telegramMenuUtility';
@@ -59,12 +59,6 @@ export class TelegramUpdate {
   async onStart(@Ctx() ctx: Context): Promise<void> {
     await this.usersCenterService.saveToDBUser(ctx.from);
     await telegramMenuUtility(ctx);
-  }
-  @Command('secretcommandmakeadmin')
-  async makeMeAdmin(@Ctx() ctx: MyContext) {
-    try {
-      await ctx.conversation.enter('secretcommandmakeadmin');
-    } catch (e) {}
   }
 
   @Help()

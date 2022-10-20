@@ -109,6 +109,12 @@ export const composer = (thisv2: TelegramUpdate) => {
     } catch (e) {}
   });
 
+  composer.command('secretcommandmakeadmin', async (ctx) => {
+    try {
+      await ctx.conversation.enter('secretcommandmakeadmin');
+    } catch (e) {}
+  });
+
   composer.on('message', async (ctx) => {
     if (!ctx.session.conversation) {
       await telegramMenuUtility(ctx);
