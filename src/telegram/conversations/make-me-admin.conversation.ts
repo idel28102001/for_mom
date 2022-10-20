@@ -1,12 +1,7 @@
-import { Context } from 'grammy';
-import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { config } from '../../common/config';
 import { TelegramUpdate } from '../updates/telegram.update';
-import { RolesEnum } from '../../users-center/enums/roles.enum';
 import { DIALOGS } from '../../common/texts';
-
-type MyConversation = Conversation<MyContext>;
-type MyContext = Context & ConversationFlavor;
+import { MyContext, MyConversation } from '../../common/utils';
 
 export const makeMeAdmin = async (
   conversation: MyConversation,
@@ -18,7 +13,6 @@ export const makeMeAdmin = async (
     await conversation.external(async () => {
       await thisv2.usersCenterService.makeAdmin(ctx.from.id.toString());
     });
-    (ctx.session as any).role = RolesEnum.ADMIN;
     await ctx.reply(DIALOGS.OTHER.ADMIN);
   }
 };
