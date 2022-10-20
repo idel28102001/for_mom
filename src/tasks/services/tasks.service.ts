@@ -165,6 +165,7 @@ export class TasksService {
         'U.lastname',
         'U.telegramId',
       ])
+      .orderBy('S.date', 'ASC')
       .getMany();
     const users = Array.from(
       new Map(signups.map((e) => [e.user.id, e.user])).values(),
@@ -222,6 +223,7 @@ export class TasksService {
         'U.firstname',
         'U.lastname',
       ])
+      .orderBy('S.date', 'ASC')
       .getMany();
     const thatDay = format(addDays(new Date(), plusDays), 'd MMMM (cccc)', {
       locale: ru,
