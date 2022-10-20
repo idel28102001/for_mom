@@ -20,8 +20,8 @@ export class RedisService {
       // const rrr = await this.set('123312', JSON.stringify(obj), 0);
       // const aaa = await this.getByPattern('');
       // console.log(aaa);
-      await this.cacheManager.set('123', '321');
-      const aaa = await this.cacheManager.get('123');
+      // await this.cacheManager.set('333', '333', 0);
+      const aaa = await this.cacheManager.get('333');
       console.log(aaa, 123);
     } catch (e) {
       console.log(e);

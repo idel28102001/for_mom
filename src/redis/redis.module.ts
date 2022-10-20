@@ -1,20 +1,23 @@
 import { RedisTokenEnum } from './enums/tokens/redis.token.enum';
 import { DatabaseModule } from '../database/database.module';
-import type { ClientOpts } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule, Module } from '@nestjs/common';
 import { RedisService } from './services/redis.service';
-import { config } from '../common/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     DatabaseModule,
     // CacheModule.register(),
-    CacheModule.register<ClientOpts>({
-      isGlobal: true,
-      store: redisStore,
-      host: config.get('REDIS_HOST'),
-      port: Number(config.get('REDIS_PORT')),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get('REDIS_HOST'),
+        port: configService.get('REDIS_PORT'),
+        ttl: 0,
+      }),
     }),
     // CacheModule.register<ClientOpts>({
     //   store: redisStore,
