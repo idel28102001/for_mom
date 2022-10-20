@@ -186,8 +186,10 @@ export class SignupsService {
         i++;
       } else {
         if (sum > 60 * 8 - times) {
+          console.log(sum);
           dates.delete(firstDate);
         }
+        sum = 0;
         someToPass = duration ? Number(duration) / 30 - 1 : 0;
         firstDate = currentDate;
         dates.set(firstDate, []);

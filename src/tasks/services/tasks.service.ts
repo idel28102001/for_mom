@@ -70,7 +70,9 @@ export class TasksService {
 
   async deleteEvent(id: string) {
     await this.redisService.del(id);
-    this.schedulerRegistry.deleteCronJob(id);
+    try {
+      this.schedulerRegistry.deleteCronJob(id);
+    } catch (e) {}
   }
 
   async createEvent(
