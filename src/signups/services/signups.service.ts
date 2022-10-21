@@ -8,24 +8,34 @@ import {
   compareAsc,
   compareDesc,
   format,
+  getHours,
+  subDays,
   subMinutes,
 } from 'date-fns';
 import { SignupsTokenEnum } from '../enums/signups.token.enum';
 import { UsersCenterEntity } from '../../users-center/entities/users.entity';
 
 const funt = (day: Date, endTime = 1170) => {
-  const start = format(day, 'yyyy-MM-dd');
+  let start: string;
+  let startCondition: string;
+  if (getHours(day) < 9) {
+    start = format(subDays(day, 1), 'yyyy-MM-dd kk:mm');
+    startCondition = format(subDays(day, 1), 'yyyy-MM-dd');
+  } else {
+    start = format(day, 'yyyy-MM-dd');
+    startCondition = start.toString();
+  }
   const endDate = format(addDays(day, 7), 'yyyy-MM-dd');
 
   return `select gs2 as date,duration from (public.signups s FULL JOIN
     (select gs2::timestamp
-    from generate_series('${start}', '${endDate}', interval '1 day') gs
+    from generate_series('${startCondition}', '${endDate}', interval '1 day') gs
     left join lateral
     (select gs2::timestamp
     from generate_series(gs::timestamp + interval '8 hours',
     gs::timestamp + interval '${endTime} minutes',
     interval '30 minutes') gs2) lj on true) d on d.gs2=s.date)
-          where gs2>'${start}' and gs2<'${endDate}' 
+          where gs2>='${start}' and gs2<'${endDate}' 
           order by gs2 asc;
  `;
 };
@@ -142,6 +152,7 @@ export class SignupsService {
     times: number,
     dateToFilter: Date,
   ) {
+    console.log(funt(startDate));
     const all = (await this.signupsRepo.query(funt(startDate))) as Array<{
       date: Date;
       duration: null | string;
