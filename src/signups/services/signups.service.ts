@@ -152,7 +152,6 @@ export class SignupsService {
     times: number,
     dateToFilter: Date,
   ) {
-    console.log(funt(startDate));
     const all = (await this.signupsRepo.query(funt(startDate))) as Array<{
       date: Date;
       duration: null | string;
@@ -201,7 +200,7 @@ export class SignupsService {
           dates.delete(firstDate);
         }
         sum = 0;
-        someToPass = duration ? Number(duration) / 30 - 1 : 0;
+        someToPass = duration ? Number(duration) / 30 : 0;
         firstDate = currentDate;
         dates.set(firstDate, []);
       }

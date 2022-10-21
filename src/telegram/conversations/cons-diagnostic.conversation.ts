@@ -34,7 +34,7 @@ export const consDiagnostic = async (
   const keyboard = new Keyboard()
     .requestContact(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.SHARE)
     .text(CANCEL);
-  await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION, {
+  await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), {
     reply_markup: {
       keyboard: keyboard.build(),
       resize_keyboard: true,
@@ -44,7 +44,7 @@ export const consDiagnostic = async (
   const { msg } = await conversation.waitFor(
     ['message:contact', '::phone_number'],
     async (ctx: MyContext) => {
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION);
+      await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION());
     },
   );
   const phoneNumber = msg.text ? msg.text : msg.contact.phone_number;
