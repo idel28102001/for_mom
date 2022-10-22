@@ -54,8 +54,4 @@ export class UsersCenterService {
       { phoneNumber: phone },
     );
   }
-
-  async save() {
-    console.log(await this.usersCenterRepo.find());
-  }
 }

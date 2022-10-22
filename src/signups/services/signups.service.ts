@@ -196,7 +196,6 @@ export class SignupsService {
         i++;
       } else {
         if (sum > 60 * 8 - times) {
-          console.log(sum);
           dates.delete(firstDate);
         }
         sum = 0;

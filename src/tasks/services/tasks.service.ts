@@ -134,11 +134,6 @@ export class TasksService {
     await this.handleCron(1);
   }
 
-  @Cron('0 0 7 * * *', { name: 'notification_2', timeZone: 'Europe/Moscow' })
-  async notifyByMorning() {
-    await this.handleCron(0);
-  }
-
   @Cron('0 0 21 * * *', { name: 'notification_3', timeZone: 'Europe/Moscow' })
   async notifyMembersByNoon() {
     await this.notifyMembers(1);
@@ -146,6 +141,7 @@ export class TasksService {
 
   @Cron('0 0 9 * * *', { name: 'notification_4', timeZone: 'Europe/Moscow' })
   async notifyMembersByMorning() {
+    await this.handleCron(0);
     await this.notifyMembers(0);
   }
 
