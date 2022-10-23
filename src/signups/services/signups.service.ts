@@ -73,6 +73,7 @@ export class SignupsService {
         'U.username',
         'U.firstname',
         'U.lastname',
+        'U.telegramId',
       ]);
     if (!isAdmin) {
       fromRepo.andWhere('U.telegramId=:telegramId', { telegramId });
