@@ -194,7 +194,7 @@ export class TextsService {
     const toG = DIALOGS.MEETINGS.CREATE.ALL.TO_GOOGLE;
     const nickname = obj.user.username
       ? `${toG.P1}: @${obj.user.username}\n`
-      : '';
+      : `${toG.P1}: <a href="tg://user?id=${obj.user.telegramId}">Написать</a>\n`;
     let name = `${obj.user.firstname ? obj.user.firstname + ' ' : ''}${
       obj.user.lastname ? obj.user.lastname : ''
     }`.trim();
