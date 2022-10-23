@@ -198,16 +198,16 @@ export class TextsService {
       obj.user.lastname ? obj.user.lastname : ''
     }`.trim();
     name = name ? `${toG.P2}: ${name}\n` : '';
-    const whatsapp = `Whatsapp: <a href="${generateWhatsappLink(
+    const whatsapp = `${toG.P10}: <a href="${generateWhatsappLink(
       obj.user.phoneNumber,
       SignupsNamesEnum[obj.type],
     )}">${toG.P3}</a>`;
     const time = format(obj.date, 'kk:mm');
     return `${toG.P4}: <b>${time}</b>\n${toG.P5}: ${Texts[obj.type]}\n${
       (isAdmin && name) || ''
-    }${toG.P6}: ${obj.comment || toG.P7}\n${toG.P8}: ${obj.user.phoneNumber}\n${
-      (isAdmin && nickname) || ''
-    }${(isAdmin && whatsapp) || ''}`;
+    }${toG.P6}: ${obj.comment || toG.P7}\n${toG.P8}: <a>${
+      obj.user.phoneNumber
+    }</a>\n${(isAdmin && nickname) || ''}${(isAdmin && whatsapp) || ''}`;
   }
 
   prepareText(thatDay: string, array: Array<SignupsEntity>, isAdmin: boolean) {
