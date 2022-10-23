@@ -56,6 +56,12 @@ export const generateWhatsappLink = (phone: string, type: string) => {
   }+${type}`;
 };
 
+export const formatPhone = (phoneNum: string) => {
+  return phoneNum.startsWith('+') || phoneNum.startsWith('7')
+    ? phoneNum
+    : `+7${phoneNum}`;
+};
+
 export const prepareNDaysForOther = (
   allDays: Array<{
     date: string;

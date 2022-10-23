@@ -4,6 +4,7 @@ import { addDays, format, parse, subMinutes } from 'date-fns';
 import { CANCEL, DIALOGS, Texts } from '../../common/texts';
 import {
   choose,
+  formatPhone,
   generateWhatsappLink,
   MyContext,
   MyConversation,
@@ -188,9 +189,7 @@ export class TextsService {
   }
 
   prepareBasic(thatDay: string, obj: SignupsEntity, isAdmin: boolean) {
-    obj.user.phoneNumber = obj.user.phoneNumber.startsWith('+7')
-      ? obj.user.phoneNumber
-      : `+7${obj.user.phoneNumber}`;
+    obj.user.phoneNumber = formatPhone(obj.user.phoneNumber);
     const toG = DIALOGS.MEETINGS.CREATE.ALL.TO_GOOGLE;
     const nickname = obj.user.username
       ? `${toG.P1}: @${obj.user.username}\n`

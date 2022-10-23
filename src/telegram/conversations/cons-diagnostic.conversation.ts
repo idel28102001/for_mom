@@ -1,4 +1,4 @@
-import { choose } from '../../common/utils';
+import { choose, formatPhone } from '../../common/utils';
 import { parse } from 'date-fns';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { Context, Keyboard } from 'grammy';
@@ -48,7 +48,7 @@ export const consDiagnostic = async (
     },
   );
   const phoneNum = msg.text ? msg.text : msg.contact.phone_number;
-  const phoneNumber = phoneNum.startsWith('+7') ? phoneNum : `+7${phoneNum}`;
+  const phoneNumber = formatPhone(phoneNum);
   await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.Q1, {
     reply_markup: {
       keyboard: [
