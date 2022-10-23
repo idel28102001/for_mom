@@ -4,7 +4,7 @@ import { SignupsEntity } from '../signups/entities/signups.entity';
 import { ru } from 'date-fns/locale';
 import { Context, SessionFlavor } from 'grammy';
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
-import { CANCEL } from './texts';
+import { CANCEL, DIALOGS } from './texts';
 import { RolesEnum } from '../users-center/enums/roles.enum';
 
 export interface SessionData {
@@ -47,13 +47,13 @@ export const prepareNDays = (
 };
 
 export const choose = async (ctx: MyContext) => {
-  await ctx.reply('Выберите пункт из предложенных вариантов');
+  await ctx.reply(DIALOGS.OTHER.CHOOSE);
 };
 
 export const generateWhatsappLink = (phone: string, type: string) => {
-  return `https://api.whatsapp.com/send?phone=${phone.slice(
-    1,
-  )}&text=Привет%2C у нас с тобой сейчас ${type}`;
+  return `https://api.whatsapp.com/send?phone=${phone.slice(1)}&text=${
+    DIALOGS.MEETINGS.FOR_LINK.A1
+  }+${type}`;
 };
 
 export const prepareNDaysForOther = (

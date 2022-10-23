@@ -11,7 +11,10 @@ export enum Texts {
 export const CANCEL = 'Отмена';
 
 export const DIALOGS = {
-  OTHER: { ADMIN: 'Теперь вы админ' },
+  OTHER: {
+    ADMIN: 'Теперь вы админ',
+    CHOOSE: 'Выберите пункт из предложенных вариантов',
+  },
   CONFIRMATION: {
     KEYBOARD: { CONFIRM: 'Подтвердить', REEDIT: 'Перезаписать' },
     QUESTIONS: { Q1: 'Вы подтверждаете?' },
@@ -21,6 +24,7 @@ export const DIALOGS = {
     TRY: 'К сожалению это время уже занято, попробуйте ещё раз',
   },
   MEETINGS: {
+    FOR_LINK: { A1: 'Привет,+у+нас+с+тобой+сейчас' },
     FUTURE: {
       A1: 'у вас состоится',
       A2: 'Завтра',
