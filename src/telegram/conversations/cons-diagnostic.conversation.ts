@@ -47,7 +47,8 @@ export const consDiagnostic = async (
       await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION());
     },
   );
-  const phoneNumber = msg.text ? msg.text : msg.contact.phone_number;
+  const phoneNum = msg.text ? msg.text : msg.contact.phone_number;
+  const phoneNumber = phoneNum.startsWith('+7') ? phoneNum : `+7${phoneNum}`;
   await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.Q1, {
     reply_markup: {
       keyboard: [

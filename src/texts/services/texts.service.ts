@@ -188,9 +188,12 @@ export class TextsService {
   }
 
   prepareBasic(thatDay: string, obj: SignupsEntity, isAdmin: boolean) {
+    obj.user.phoneNumber = obj.user.phoneNumber.startsWith('+7')
+      ? obj.user.phoneNumber
+      : `+7${obj.user.phoneNumber}`;
     const toG = DIALOGS.MEETINGS.CREATE.ALL.TO_GOOGLE;
     const nickname = obj.user.username
-      ? `\n${toG.P1}: @${obj.user.username}\n`
+      ? `${toG.P1}: @${obj.user.username}\n`
       : '';
     let name = `${obj.user.firstname ? obj.user.firstname + ' ' : ''}${
       obj.user.lastname ? obj.user.lastname : ''
@@ -203,7 +206,7 @@ export class TextsService {
     const time = format(obj.date, 'kk:mm');
     return `${toG.P4}: <b>${time}</b>\n${toG.P5}: ${Texts[obj.type]}\n${
       (isAdmin && name) || ''
-    }${toG.P6}: ${obj.comment || toG.P7}\n${toG.P8}: ${obj.user.phoneNumber}${
+    }${toG.P6}: ${obj.comment || toG.P7}\n${toG.P8}: ${obj.user.phoneNumber}\n${
       (isAdmin && nickname) || ''
     }${(isAdmin && whatsapp) || ''}`;
   }
