@@ -195,7 +195,7 @@ export class SignupsService {
         }
         i++;
       } else {
-        if (sum > 60 * 8 - times) {
+        if (sum >= 60 * 8 - times) {
           dates.delete(firstDate);
         }
         sum = 0;
