@@ -74,7 +74,7 @@ const editMeeting = async (
         }),
       );
       await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.A1, menuKeyboard);
-      break;
+      return;
     }
     case DIALOGS.MEETINGS.EDIT.EVENT.PHONE_NUMBER: {
       const phoneNumber = await thisv2.textsService.AUSPhone(ctx, conversation);
@@ -85,7 +85,7 @@ const editMeeting = async (
         }),
       );
       await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.A1, menuKeyboard);
-      break;
+      return;
     }
     case DIALOGS.MEETINGS.EDIT.EVENT.DATE: {
       const resDate = await thisv2.textsService.AUSDate(

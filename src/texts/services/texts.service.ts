@@ -83,7 +83,6 @@ export class TextsService {
     thisv2: TelegramUpdate,
     meet: SignupsEntity,
   ) {
-    await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.A1);
     const { time, date } = await thisv2.textsService.getDate(
       {
         conversation,

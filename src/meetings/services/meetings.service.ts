@@ -37,17 +37,29 @@ export class MeetingsService {
       .select(['S.id', 'U.id', 'U.telegramId'])
       .getOne();
 
-    await this.signupsService.repo.update({ id: meet.id }, { date: meet.date });
-    await this.tasksService.editEvent(format(meet.date, 'yyyy-MM-dd kk:mm'), {
-      telegramId: user.telegramId,
-      date: meet.date,
-      type: meet.type,
-    });
-    await this.googleService.editEvent({
-      calendarEventId: meet.calendarEventId,
-      date,
-      duration: meet.duration,
-    });
+    await this.signupsService.repo
+      .update({ id: meet.id }, { date: meet.date })
+      .catch((e) => {
+        console.log(e, 1);
+      });
+    await this.tasksService
+      .editEvent(format(meet.date, 'yyyy-MM-dd kk:mm'), {
+        telegramId: user.telegramId,
+        date: meet.date,
+        type: meet.type,
+      })
+      .catch((e) => {
+        console.log(e, 2);
+      });
+    await this.googleService
+      .editEvent({
+        calendarEventId: meet.calendarEventId,
+        date,
+        duration: meet.duration,
+      })
+      .catch((e) => {
+        console.log(e, 3);
+      });
   }
 
   async createMeeting(obj: {
