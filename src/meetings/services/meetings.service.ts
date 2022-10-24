@@ -100,9 +100,13 @@ export class MeetingsService {
     } catch (e) {}
 
     try {
-      this.tasksService.deleteEvent(format(sign.date, 'yyyy-MM-dd kk:mm'));
+      await this.tasksService.deleteEvent(
+        format(sign.date, 'yyyy-MM-dd kk:mm'),
+      );
     } catch (e) {}
-    await this.signupsService.repo.remove(sign);
+    try {
+      await this.signupsService.repo.remove(sign);
+    } catch (e) {}
     return true;
   }
 
