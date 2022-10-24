@@ -64,17 +64,9 @@ export class SignupsService {
   async getAll(isAdmin: boolean, telegramId: string) {
     const fromRepo = this.signupsRepo
       .createQueryBuilder('S')
-      .innerJoin('S.user', 'U')
+      .innerJoinAndSelect('S.user', 'U')
       .where('"S".date>now()')
-      .orderBy('S.date', 'ASC')
-      .addSelect([
-        'U.id',
-        'U.phoneNumber',
-        'U.username',
-        'U.firstname',
-        'U.lastname',
-        'U.telegramId',
-      ]);
+      .orderBy('S.date', 'ASC');
     if (!isAdmin) {
       fromRepo.andWhere('U.telegramId=:telegramId', { telegramId });
     }

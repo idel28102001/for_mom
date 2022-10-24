@@ -10,14 +10,16 @@ import { DIALOGS } from '../../common/texts';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { menuKeyboard } from '../utility/telegramMenuUtility';
+import { RolesEnum } from '../../users-center/enums/roles.enum';
 
 const editMeeting = async (
   conversation: MyConversation,
   ctx: MyContext,
   thisv2: TelegramUpdate,
+  isAdmin: boolean,
 ) => {
   const { daysForKeyboard, all } = await conversation.external(async () => {
-    return await thisv2.signupsService.getAll(false, ctx.from.id.toString());
+    return await thisv2.signupsService.getAll(isAdmin, ctx.from.id.toString());
   });
   if (daysForKeyboard.length === 0) {
     await ctx.reply(DIALOGS.MEETINGS.DAYS.A1);
@@ -80,7 +82,7 @@ const editMeeting = async (
       const phoneNumber = await thisv2.textsService.AUSPhone(ctx, conversation);
       await conversation.external(() =>
         thisv2.usersCenterService.editPhoneNumber({
-          telegramId: ctx.from.id.toString(),
+          telegramId: meet.user.telegramId,
           phoneNumber,
         }),
       );
@@ -121,5 +123,10 @@ export const editMeet = async (
   ctx: MyContext,
   thisv2: TelegramUpdate,
 ) => {
-  return await editMeeting(conversation, ctx, thisv2);
+  const isAdmin = ctx.session.role === RolesEnum.ADMIN;
+  if (isAdmin) {
+    return await editMeeting(conversation, ctx, thisv2, true);
+  } else {
+    return await editMeeting(conversation, ctx, thisv2, false);
+  }
 };
