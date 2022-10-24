@@ -36,16 +36,15 @@ export class MeetingsService {
       .innerJoin('S.user', 'U')
       .select(['S.id', 'U.id', 'U.telegramId'])
       .getOne();
-
     await this.signupsService.repo
-      .update({ id: meet.id }, { date: meet.date })
+      .update({ id: meet.id }, { date })
       .catch((e) => {
         console.log(e, 1);
       });
     await this.tasksService
       .editEvent(format(meet.date, 'yyyy-MM-dd kk:mm'), {
         telegramId: user.telegramId,
-        date: meet.date,
+        date,
         type: meet.type,
       })
       .catch((e) => {

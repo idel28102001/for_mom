@@ -122,10 +122,17 @@ export const consDiagnostic = async (
         await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard);
         return;
       }
-      await conversation.external(async () => {
-        await thisv2.meetingsService.createMeeting(obj);
+      const result = await conversation.external(async () => {
+        return await thisv2.meetingsService
+          .createMeeting(obj)
+          .then((e) => 1)
+          .catch((e) => 0);
       });
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard); //TEST
+      if (result) {
+        await ctx.reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard); //TEST
+      } else {
+        await ctx.reply(DIALOGS.ERRORS.MESSAGE);
+      }
       return;
     }
     case DIALOGS.CONFIRMATION.KEYBOARD.REEDIT: {
