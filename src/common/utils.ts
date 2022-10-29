@@ -6,10 +6,12 @@ import { Context, SessionFlavor } from 'grammy';
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import { CANCEL, DIALOGS } from './texts';
 import { RolesEnum } from '../users-center/enums/roles.enum';
+import { KeyboardButton } from '@grammyjs/types/markup';
 
 export interface SessionData {
   role: RolesEnum;
 }
+
 export type MyConversation = Conversation<MyContext>;
 export type MyContext = Context &
   ConversationFlavor &
@@ -48,6 +50,10 @@ export const prepareNDays = (
 
 export const choose = async (ctx: MyContext) => {
   await ctx.reply(DIALOGS.OTHER.CHOOSE);
+};
+
+const chooseV2 = async (other, ctx: MyContext) => {
+  await ctx.reply(DIALOGS.OTHER.CHOOSE, other);
 };
 
 export const generateWhatsappLink = (phone: string, type: string) => {
@@ -105,4 +111,46 @@ export const preparyTime = (timeArray: Array<Date>) => {
   const keyboard = sliceIntoChunks<{ text: string }>(all, 6);
   keyboard.push([{ text: CANCEL }]);
   return { times, keyboard };
+};
+
+const parseKeyboard = (
+  keyboard: Array<
+    Array<KeyboardButton.CommonButton | KeyboardButton.RequestContactButton>
+  >,
+) => {
+  const words: Array<string> = [];
+  keyboard.forEach((keyLvl2) => {
+    words.push(...keyLvl2.map((e) => e.text));
+  });
+  return words;
+};
+
+export const prepareReply = async ({
+  ctx,
+  conversation,
+  text,
+  keyboard,
+  addToOther = {},
+}: {
+  ctx: MyContext;
+  conversation: MyConversation;
+  keyboard: Array<
+    Array<KeyboardButton.CommonButton | KeyboardButton.RequestContactButton>
+  >;
+  text: string;
+  addToOther?: Record<any, any>;
+}) => {
+  const other = {
+    ...addToOther,
+    ...{
+      reply_markup: {
+        keyboard,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      },
+    },
+  };
+  await ctx.reply(text, other);
+  const words = parseKeyboard(keyboard);
+  return await conversation.form.select(words, chooseV2.bind(null, other));
 };

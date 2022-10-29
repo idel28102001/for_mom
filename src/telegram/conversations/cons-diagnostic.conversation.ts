@@ -1,4 +1,4 @@
-import { choose, formatPhone } from '../../common/utils';
+import { formatPhone, prepareReply } from '../../common/utils';
 import { parse } from 'date-fns';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { Context, Keyboard } from 'grammy';
@@ -34,17 +34,21 @@ export const consDiagnostic = async (
   const keyboard = new Keyboard()
     .requestContact(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.SHARE)
     .text(CANCEL);
-  await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), {
+  const replyForPhone = {
     reply_markup: {
       keyboard: keyboard.build(),
       resize_keyboard: true,
       one_time_keyboard: true,
     },
-  });
+  };
+  await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), replyForPhone);
   const { msg } = await conversation.waitFor(
     ['message:contact', '::phone_number'],
     async (ctx: MyContext) => {
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION());
+      await ctx.reply(
+        DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(),
+        replyForPhone,
+      );
     },
   );
   const phoneNum = msg.text ? msg.text : msg.contact.phone_number;
@@ -88,14 +92,12 @@ export const consDiagnostic = async (
   }\n${cText.P4} ${time}\n${cText.P5} ${phoneNumber}`;
   resText = comment ? `${resText}\n${cText.P6} ${comment}` : resText;
 
-  await ctx.reply(
-    `${resText}\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`,
-    confirmKeyboard,
-  );
-  const answer = await conversation.form.select(
-    Object.values(DIALOGS.CONFIRMATION.KEYBOARD),
-    choose,
-  );
+  const answer = await prepareReply({
+    ctx,
+    conversation,
+    keyboard: confirmKeyboard.reply_markup.keyboard,
+    text: `${resText}\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`,
+  });
   switch (answer) {
     case DIALOGS.CONFIRMATION.KEYBOARD.CONFIRM: {
       const resDate = parse(
@@ -131,7 +133,7 @@ export const consDiagnostic = async (
       if (result) {
         await ctx.reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard); //TEST
       } else {
-        await ctx.reply(DIALOGS.ERRORS.MESSAGE);
+        await ctx.reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard);
       }
       return;
     }

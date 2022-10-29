@@ -1,12 +1,12 @@
 import { TelegramUpdate } from '../updates/telegram.update';
 import {
-  choose,
   MyContext,
   MyConversation,
   prepareNDaysForOther,
   prepareNTimesForOther,
+  prepareReply,
 } from '../../common/utils';
-import { DIALOGS } from '../../common/texts';
+import { CANCEL, DIALOGS } from '../../common/texts';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { menuKeyboard } from '../utility/telegramMenuUtility';
@@ -28,44 +28,45 @@ const editMeeting = async (
   let meetings = all[0].meetings;
   let thatDay = format(new Date(all[0].date), 'd MMMM (cccc)', { locale: ru });
   if (daysForKeyboard.length > 1) {
-    const { daysForKeyboard, words, withTimes } = prepareNDaysForOther(all);
-    await ctx.reply(DIALOGS.MEETINGS.DAYS.Q1, {
-      reply_markup: {
-        keyboard: daysForKeyboard,
-        resize_keyboard: true,
-        one_time_keyboard: true,
-      },
+    const { daysForKeyboard, withTimes } = prepareNDaysForOther(all);
+    thatDay = await prepareReply({
+      ctx,
+      conversation,
+      keyboard: daysForKeyboard,
+      text: DIALOGS.MEETINGS.DAYS.Q1,
     });
-    thatDay = await conversation.form.select(words, choose);
+
     meetings = withTimes.find((e) => e.text === thatDay).meetings;
   }
 
   let meet = meetings[0];
   if (meetings.length > 1) {
-    const { times, words, withTimes } = prepareNTimesForOther(meetings);
-    await ctx.reply(DIALOGS.MEETINGS.DAYS.Q2, {
-      reply_markup: {
-        keyboard: times,
-        resize_keyboard: true,
-        one_time_keyboard: true,
-      },
+    const { times, withTimes } = prepareNTimesForOther(meetings);
+
+    const answer = await prepareReply({
+      ctx,
+      conversation,
+      keyboard: times,
+      text: DIALOGS.MEETINGS.DAYS.Q2,
     });
-    const answer = await conversation.form.select(words, choose);
+
     meet = withTimes.find((e) => e.text === answer).meeting;
   }
-  const { text, texts, forKeyboard } = await conversation.external(() =>
+  const { text, texts } = await conversation.external(() =>
     thisv2.meetingsService.sendInfoToEdit(thatDay, meet, false),
   );
-  await ctx.reply(text, {
-    reply_markup: {
-      keyboard: forKeyboard,
-      resize_keyboard: true,
-      one_time_keyboard: true,
+
+  const answer = await prepareReply({
+    ctx,
+    conversation,
+    keyboard: [texts.map((e) => ({ text: e })), [{ text: CANCEL }]],
+    addToOther: {
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
     },
-    parse_mode: 'HTML',
-    disable_web_page_preview: true,
+    text,
   });
-  const answer = await conversation.form.select(texts, choose);
+
   switch (answer) {
     case DIALOGS.MEETINGS.EDIT.EVENT.COMMENT: {
       const comment = await thisv2.textsService.AUSComment(ctx, conversation);

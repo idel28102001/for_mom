@@ -9,6 +9,7 @@ import {
   MyContext,
   MyConversation,
   prepareNDays,
+  prepareReply,
   preparyTime,
 } from '../../common/utils';
 import { confirmKeyboard } from '../../telegram/utility/telegramMenuUtility';
@@ -50,30 +51,25 @@ export class TextsService {
       }
       return result.slice(0, 7);
     });
-    const { days, words, keyboard: keyboardDays } = prepareNDays(allDays);
-
-    await ctx.reply(DIALOGS.MEETINGS.CREATE.DATE.DAY, {
-      reply_markup: {
-        keyboard: keyboardDays,
-        resize_keyboard: true,
-        one_time_keyboard: true,
-      },
+    const { days, keyboard: keyboardDays } = prepareNDays(allDays);
+    const date = await prepareReply({
+      ctx,
+      conversation,
+      text: DIALOGS.MEETINGS.CREATE.DATE.DAY,
+      keyboard: keyboardDays,
     });
-    const date = await conversation.form.select(words, choose);
     const allTimes = allDays.find(
       (elem) => elem.day === days.find((e) => e.word === date).day,
     );
-    const { times, keyboard: keyboardTime } = preparyTime(
+    const { keyboard: keyboardTime } = preparyTime(
       allTimes.times.map((e) => e.date),
     );
-    await ctx.reply(DIALOGS.MEETINGS.CREATE.DATE.TIME, {
-      reply_markup: {
-        keyboard: keyboardTime,
-        resize_keyboard: true,
-        one_time_keyboard: true,
-      },
+    const time = await prepareReply({
+      ctx,
+      conversation,
+      text: DIALOGS.MEETINGS.CREATE.DATE.TIME,
+      keyboard: keyboardTime,
     });
-    const time = await conversation.form.select(times, choose);
     return { date, time };
   }
 

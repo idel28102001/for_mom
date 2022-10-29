@@ -38,27 +38,21 @@ export class MeetingsService {
       .getOne();
     await this.signupsService.repo
       .update({ id: meet.id }, { date })
-      .catch((e) => {
-        console.log(e, 1);
-      });
+      .catch((e) => {});
     await this.tasksService
       .editEvent(format(meet.date, 'yyyy-MM-dd kk:mm'), {
         telegramId: user.telegramId,
         date,
         type: meet.type,
       })
-      .catch((e) => {
-        console.log(e, 2);
-      });
+      .catch((e) => {});
     await this.googleService
       .editEvent({
         calendarEventId: meet.calendarEventId,
         date,
         duration: meet.duration,
       })
-      .catch((e) => {
-        console.log(e, 3);
-      });
+      .catch((e) => {});
   }
 
   async createMeeting(obj: {

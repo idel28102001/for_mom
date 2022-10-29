@@ -1,14 +1,15 @@
 import { TelegramUpdate } from '../updates/telegram.update';
 import {
-  choose,
   MyContext,
   MyConversation,
   prepareNDaysForOther,
+  prepareReply,
 } from '../../common/utils';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { DIALOGS } from '../../common/texts';
 import { RolesEnum } from '../../users-center/enums/roles.enum';
+import { menuKeyboard } from '../utility/telegramMenuUtility';
 
 const allMeetings = async (
   conversation: MyConversation,
@@ -21,7 +22,7 @@ const allMeetings = async (
   });
   switch (daysForKeyboard.length) {
     case 0: {
-      await ctx.reply(DIALOGS.MEETINGS.DAYS.A1);
+      await ctx.reply(DIALOGS.MEETINGS.DAYS.A1, menuKeyboard);
       break;
     }
     case 1: {
@@ -36,15 +37,13 @@ const allMeetings = async (
       break;
     }
     default: {
-      const { daysForKeyboard, words, withTimes } = prepareNDaysForOther(all);
-      await ctx.reply(DIALOGS.MEETINGS.DAYS.Q1, {
-        reply_markup: {
-          keyboard: daysForKeyboard,
-          resize_keyboard: true,
-          one_time_keyboard: true,
-        },
+      const { daysForKeyboard, withTimes } = prepareNDaysForOther(all);
+      const thatDay = await prepareReply({
+        ctx,
+        conversation,
+        keyboard: daysForKeyboard,
+        text: DIALOGS.MEETINGS.DAYS.Q1,
       });
-      const thatDay = await conversation.form.select(words, choose);
       const meetings = withTimes.find((e) => e.text === thatDay).meetings;
       await conversation.external(async () => {
         await thisv2.telegramService.sendMeetingsInfo(
