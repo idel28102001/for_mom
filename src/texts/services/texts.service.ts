@@ -3,7 +3,6 @@ import { SignupsEntity } from '../../signups/entities/signups.entity';
 import { addDays, format, parse, subMinutes } from 'date-fns';
 import { CANCEL, DIALOGS, Texts } from '../../common/texts';
 import {
-  choose,
   formatPhone,
   generateWhatsappLink,
   MyContext,
@@ -99,11 +98,12 @@ export class TextsService {
     const text = `${DIALOGS.MEETINGS.CREATE.DATE.S1} ${
       date.split(' (')[0]
     }\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`;
-    await ctx.reply(text, confirmKeyboard);
-    const answer = await conversation.form.select(
-      Object.values(DIALOGS.CONFIRMATION.KEYBOARD),
-      choose,
-    );
+    const answer = await prepareReply({
+      ctx,
+      conversation,
+      text,
+      keyboard: confirmKeyboard.reply_markup.keyboard,
+    });
     switch (answer) {
       case DIALOGS.CONFIRMATION.KEYBOARD.CONFIRM: {
         return resDate;
@@ -118,11 +118,12 @@ export class TextsService {
     await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.ACTION);
     const comment = await conversation.form.text();
     const text = `${DIALOGS.MEETINGS.CREATE.COMMENT.S1} ${comment}\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`;
-    await ctx.reply(text, confirmKeyboard);
-    const answer = await conversation.form.select(
-      Object.values(DIALOGS.CONFIRMATION.KEYBOARD),
-      choose,
-    );
+    const answer = await prepareReply({
+      ctx,
+      conversation,
+      text,
+      keyboard: confirmKeyboard.reply_markup.keyboard,
+    });
     switch (answer) {
       case DIALOGS.CONFIRMATION.KEYBOARD.CONFIRM: {
         return comment;
@@ -152,11 +153,12 @@ export class TextsService {
     );
     const phoneNumber = msg.text ? msg.text : msg.contact.phone_number;
     const text = `${DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.S1} ${phoneNumber}\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`;
-    await ctx.reply(text, confirmKeyboard);
-    const answer = await conversation.form.select(
-      Object.values(DIALOGS.CONFIRMATION.KEYBOARD),
-      choose,
-    );
+    const answer = await prepareReply({
+      ctx,
+      text,
+      conversation,
+      keyboard: confirmKeyboard.reply_markup.keyboard,
+    });
     switch (answer) {
       case DIALOGS.CONFIRMATION.KEYBOARD.CONFIRM: {
         return phoneNumber;
