@@ -18,6 +18,7 @@ import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { editMeet } from '../conversations/edit-meet.conversation';
 import { consDiagnostic } from '../conversations/cons-diagnostic.conversation';
+import { technicsConversation } from '../conversations/technics.conversation';
 
 type MyContext = Context & ConversationFlavor;
 type MyConversation = Conversation<MyContext>;
@@ -25,6 +26,7 @@ type MyConversation = Conversation<MyContext>;
 @Injectable()
 export class TelegramService {
   calendar;
+
   constructor(
     @InjectBot() private readonly bot,
     @Inject(UsersCenterTokenEnum.USERS_CENTER_SERVICES_TOKEN)
@@ -34,6 +36,14 @@ export class TelegramService {
     @Inject(TextsTokenEnum.TEXTS_SERVICES_TOKEN)
     private readonly textsService: TextsService,
   ) {}
+
+  async technics(conversation: MyConversation, ctx: MyContext) {
+    return await technicsConversation(
+      conversation,
+      ctx,
+      this as unknown as TelegramUpdate,
+    );
+  }
 
   async sendMeetingsInfo(
     thatDay: string,
@@ -69,6 +79,7 @@ export class TelegramService {
   async allMeets(conversation: MyConversation, ctx: MyContext) {
     return await allMeets(conversation, ctx, this as unknown as TelegramUpdate);
   }
+
   async cancelMeet(conversation: MyConversation, ctx: MyContext) {
     return await cancelMeet(
       conversation,

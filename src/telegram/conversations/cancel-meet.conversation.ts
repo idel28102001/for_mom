@@ -22,7 +22,7 @@ const cancel = async (
     return await thisv2.signupsService.getAll(isAdmin, ctx.from.id.toString());
   });
   if (daysForKeyboard.length === 0) {
-    await ctx.reply(DIALOGS.MEETINGS.DAYS.A1, menuKeyboard);
+    await ctx.reply(DIALOGS.MEETINGS.DAYS.A1, menuKeyboard(ctx));
     return;
   }
   let meetings = all[0].meetings;
@@ -70,12 +70,15 @@ const cancel = async (
       thisv2.meetingsService.deleteMeeting(meetings[0].id),
     );
     if (result) {
-      await ctx.reply(DIALOGS.MEETINGS.CANCELATION.CONFIRM.A, menuKeyboard);
+      await ctx.reply(
+        DIALOGS.MEETINGS.CANCELATION.CONFIRM.A,
+        menuKeyboard(ctx),
+      );
     } else {
-      await ctx.reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard);
+      await ctx.reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard(ctx));
     }
   } else {
-    await ctx.reply(DIALOGS.MEETINGS.CANCELATION.CANCEL.A, menuKeyboard);
+    await ctx.reply(DIALOGS.MEETINGS.CANCELATION.CANCEL.A, menuKeyboard(ctx));
   }
 };
 

@@ -30,25 +30,18 @@ export class TelegramUpdate {
     @InjectBot() private readonly bot,
     @Inject(TelegramTokenEnum.TELEGRAM_SERVICES_TOKEN)
     readonly telegramService: TelegramService,
-
     @Inject(MeetingsTokenEnum.MEETINGS_SERVICES_TOKEN)
     readonly meetingsService: MeetingsService,
-
     @Inject(TasksTokenEnum.TASKS_SERVICES_TOKEN)
     readonly tasksService: TasksService,
-
     @Inject(GoogleTokenEnum.GOOGLE_SERVICES_TOKEN)
     readonly googleService: GoogleService,
-
     @Inject(RedisTokenEnum.REDIS_SERVICES_TOKEN)
     readonly redisService: RedisService,
-
     @Inject(SignupsTokenEnum.SIGNUPS_SERVICES_TOKEN)
     readonly signupsService: SignupsService,
-
     @Inject(UsersCenterTokenEnum.USERS_CENTER_SERVICES_TOKEN)
     readonly usersCenterService: UsersCenterService,
-
     @Inject(TextsTokenEnum.TEXTS_SERVICES_TOKEN)
     readonly textsService: TextsService,
   ) {
@@ -56,7 +49,7 @@ export class TelegramUpdate {
   }
 
   @Start()
-  async onStart(@Ctx() ctx: Context): Promise<void> {
+  async onStart(@Ctx() ctx: MyContext): Promise<void> {
     await this.usersCenterService.saveToDBUser(ctx.from);
     await telegramMenuUtility(ctx);
   }

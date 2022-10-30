@@ -27,17 +27,16 @@ const funt = (day: Date, endTime = 1170) => {
   }
   const endDate = format(addDays(day, 7), 'yyyy-MM-dd');
 
-  return `select gs2 as date,duration from (public.signups s FULL JOIN
-    (select gs2::timestamp
-    from generate_series('${startCondition}', '${endDate}', interval '1 day') gs
-    left join lateral
-    (select gs2::timestamp
-    from generate_series(gs::timestamp + interval '8 hours',
-    gs::timestamp + interval '${endTime} minutes',
-    interval '30 minutes') gs2) lj on true) d on d.gs2=s.date)
-          where gs2>='${start}' and gs2<'${endDate}' 
-          order by gs2 asc;
- `;
+  return `select gs2 as date,duration
+            from (public.signups s FULL JOIN
+                (select gs2:: timestamp
+                from generate_series('${startCondition}', '${endDate}', interval '1 day') gs
+                left join lateral
+                (select gs2:: timestamp
+                from generate_series(gs:: timestamp + interval '8 hours', gs:: timestamp + interval '${endTime} minutes', interval '30 minutes') gs2) lj on true) d on d.gs2=s.date)
+            where gs2>='${start}' and gs2<'${endDate}'
+            order by gs2 asc;
+    `;
 };
 
 @Injectable()
@@ -49,6 +48,14 @@ export class SignupsService {
 
   get repo() {
     return this.signupsRepo;
+  }
+
+  async getCountOfMeets() {
+    return await this.signupsRepo
+      .createQueryBuilder('S')
+      .where('"S".date>now()')
+      .getCount()
+      .catch((e) => console.log(e));
   }
 
   async editComment({

@@ -22,7 +22,7 @@ const allMeetings = async (
   });
   switch (daysForKeyboard.length) {
     case 0: {
-      await ctx.reply(DIALOGS.MEETINGS.DAYS.A1, menuKeyboard);
+      await ctx.reply(DIALOGS.MEETINGS.DAYS.A1, menuKeyboard(ctx));
       break;
     }
     case 1: {

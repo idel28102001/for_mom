@@ -24,13 +24,10 @@ export class TasksService {
     private readonly schedulerRegistry: SchedulerRegistry,
     @Inject(UsersCenterTokenEnum.USERS_CENTER_SERVICES_TOKEN)
     private readonly usersCenterService: UsersCenterService,
-
     @Inject(TextsTokenEnum.TEXTS_SERVICES_TOKEN)
     private readonly textsService: TextsService,
-
     @Inject(SignupsTokenEnum.SIGNUPS_SERVICES_TOKEN)
     private readonly signupsService: SignupsService,
-
     @Inject(RedisTokenEnum.REDIS_SERVICES_TOKEN)
     private readonly redisService: RedisService,
   ) {
@@ -47,6 +44,12 @@ export class TasksService {
         }),
       );
     })();
+  }
+
+  async getCounts() {
+    const all = await this.schedulerRegistry.getCronJobs();
+    return Array.from(all.keys()).filter((e) => !/^notification/.test(e))
+      .length;
   }
 
   async editEvent(

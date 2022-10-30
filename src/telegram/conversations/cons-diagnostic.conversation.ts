@@ -121,7 +121,7 @@ export const consDiagnostic = async (
         thisv2.signupsService.checkIfOK(obj),
       );
       if (isNotOk) {
-        await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard);
+        await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard(ctx));
         return;
       }
       const result = await conversation.external(async () => {
@@ -131,9 +131,9 @@ export const consDiagnostic = async (
           .catch((e) => 0);
       });
       if (result) {
-        await ctx.reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard); //TEST
+        await ctx.reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard(ctx)); //TEST
       } else {
-        await ctx.reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard);
+        await ctx.reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard(ctx));
       }
       return;
     }

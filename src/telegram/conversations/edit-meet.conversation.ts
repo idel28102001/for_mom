@@ -76,7 +76,7 @@ const editMeeting = async (
           comment,
         }),
       );
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.A1, menuKeyboard);
+      await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.A1, menuKeyboard(ctx));
       return;
     }
     case DIALOGS.MEETINGS.EDIT.EVENT.PHONE_NUMBER: {
@@ -87,7 +87,10 @@ const editMeeting = async (
           phoneNumber,
         }),
       );
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.A1, menuKeyboard);
+      await ctx.reply(
+        DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.A1,
+        menuKeyboard(ctx),
+      );
       return;
     }
     case DIALOGS.MEETINGS.EDIT.EVENT.DATE: {
@@ -107,13 +110,13 @@ const editMeeting = async (
         ),
       );
       if (isNotOk) {
-        await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard);
+        await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard(ctx));
         return;
       }
       await conversation.external(() =>
         thisv2.meetingsService.editMeeting({ date: resDate, meet }),
       );
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.DATE.A1, menuKeyboard);
+      await ctx.reply(DIALOGS.MEETINGS.CREATE.DATE.A1, menuKeyboard(ctx));
       break;
     }
   }

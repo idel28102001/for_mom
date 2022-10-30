@@ -11,6 +11,10 @@ export class RedisService {
     private readonly cacheManager: Cache,
   ) {}
 
+  async getCounts() {
+    return (await this.getAll()).length;
+  }
+
   async createEvent(
     name: string,
     obj: {

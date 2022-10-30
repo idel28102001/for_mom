@@ -49,6 +49,13 @@ export const composer = (thisv2: TelegramUpdate) => {
       'diagnostic',
     ),
   );
+
+  composer.use(
+    createConversation(
+      thisv2.telegramService.technics.bind(thisv2),
+      'technics',
+    ),
+  );
   composer.use(
     createConversation(
       thisv2.telegramService.consDiagnostic.bind(
@@ -106,6 +113,15 @@ export const composer = (thisv2: TelegramUpdate) => {
   composer.hears(Texts.SHOW, async (ctx) => {
     try {
       await ctx.conversation.enter('show');
+    } catch (e) {}
+  });
+
+  composer.hears(Texts.TECHNICS, async (ctx) => {
+    if (ctx.session.role !== RolesEnum.ADMIN) {
+      return;
+    }
+    try {
+      await ctx.conversation.enter('technics');
     } catch (e) {}
   });
 
