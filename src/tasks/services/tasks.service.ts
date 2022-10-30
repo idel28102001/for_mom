@@ -8,7 +8,13 @@ import { SignupsService } from '../../signups/services/signups.service';
 import { TextsTokenEnum } from '../../texts/enums/texts.token.enum';
 import { TextsService } from '../../texts/services/texts.service';
 import { RolesEnum } from '../../users-center/enums/roles.enum';
-import { addDays, compareAsc, format, formatRelative } from 'date-fns';
+import {
+  addDays,
+  addHours,
+  compareAsc,
+  format,
+  formatRelative,
+} from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { DIALOGS } from '../../common/texts';
 import { SignupsNamesEnum } from '../../signups/enums/signups-names.enum';
@@ -43,7 +49,42 @@ export class TasksService {
           await this.createEvent(obj, obj.stage);
         }),
       );
+      await this.repairAll();
     })();
+  }
+
+  async repairAll() {
+    const allSigns = await this.signupsService.repo
+      .createQueryBuilder('S')
+      .innerJoin('S.user', 'U')
+      .where('"S".date>now()')
+      .select([
+        'S.date',
+        'S.id',
+        'U.id',
+        'U.telegramId',
+        'S.type',
+        'S.duration',
+      ])
+      .getMany()
+      .then((e) =>
+        e.map((e) => ({
+          ...e,
+          telegramId: e.user.telegramId,
+          word: format(e.date, 'yyyy-MM-dd kk:mm'),
+          stage: compareAsc(e.date, addHours(new Date(), 2)) === 1 ? 1 : 2,
+        })),
+      );
+    const toRepair = await this.redisService.getFromArrayWithoutExisting(
+      allSigns.map((e) => e.word),
+    );
+    await Promise.all(
+      allSigns
+        .filter((e) => toRepair.includes(e.word))
+        .map(async (e) => {
+          await this.createEvent(e);
+        }),
+    );
   }
 
   async getCounts() {

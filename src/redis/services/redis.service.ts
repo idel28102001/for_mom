@@ -12,7 +12,13 @@ export class RedisService {
   ) {}
 
   async getCounts() {
-    return (await this.getAll()).length;
+    const all = await this.getAll();
+    return all.length;
+  }
+
+  async getFromArrayWithoutExisting(array: Array<string>) {
+    const allRedis = await this.getAll();
+    return array.filter((e) => !allRedis.includes(e));
   }
 
   async createEvent(
