@@ -96,7 +96,8 @@ export const consDiagnostic = async (
     ctx,
     conversation,
     keyboard: confirmKeyboard.reply_markup.keyboard,
-    text: `${resText}\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`,
+    text: `${resText}\n\n<b>${DIALOGS.CONFIRMATION.QUESTIONS.Q1}</b>`,
+    addToOther: { parse_mode: 'HTML' },
   });
   switch (answer) {
     case DIALOGS.CONFIRMATION.KEYBOARD.CONFIRM: {

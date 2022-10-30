@@ -38,7 +38,7 @@ export class TasksService {
     private readonly redisService: RedisService,
   ) {
     (async () => {
-      const allKeys = await this.redisService.getAll();
+      const allKeys = await this.redisService.getAllByKeys();
       await Promise.all(
         allKeys.map(async (key) => {
           if (compareAsc(new Date(), new Date(key)) !== -1) {
@@ -82,15 +82,20 @@ export class TasksService {
       allSigns
         .filter((e) => toRepair.includes(e.word))
         .map(async (e) => {
-          await this.createEvent(e);
+          await this.createEvent(e, e.stage);
         }),
     );
   }
 
   async getCounts() {
     const all = await this.schedulerRegistry.getCronJobs();
-    return Array.from(all.keys()).filter((e) => !/^notification/.test(e))
-      .length;
+    let count = 0;
+    all.forEach((value, key, map) => {
+      if (!/^notification/.test(key) && value.running) {
+        count++;
+      }
+    });
+    return count;
   }
 
   async editEvent(
@@ -139,6 +144,10 @@ export class TasksService {
       currText = curr.A6.text;
     }
     const job = new CronJob(date, async () => {
+      const users = await this.usersCenterService.repo.find({
+        where: { role: RolesEnum.ADMIN },
+      });
+
       await this.bot.api
         .sendMessage(
           obj.telegramId,
@@ -147,6 +156,19 @@ export class TasksService {
           }`,
         )
         .catch((e) => {});
+
+      await Promise.all(
+        users.map(async (e) => {
+          await this.bot.api
+            .sendMessage(
+              e.telegramId,
+              `${currText} ${DIALOGS.MEETINGS.FUTURE.A1} ${
+                SignupsNamesEnum[obj.type]
+              }`,
+            )
+            .catch((e) => {});
+        }),
+      );
       if (stage === 1) {
         await this.redisService.editEvent(currName, currName, {
           ...obj,
@@ -157,7 +179,9 @@ export class TasksService {
       }
     });
     await this.redisService.editEvent(currName, currName, { ...obj, stage });
-    await this.createIfCan(currName, job);
+    await this.createIfCan(currName, job).catch(
+      async (e) => await this.createEvent(obj, 2).catch((e) => console.log(e)),
+    );
     return currName;
   }
 

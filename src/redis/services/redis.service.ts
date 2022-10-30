@@ -1,7 +1,7 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { SignupsEnum } from '../../signups/enums/signups.enum';
-import { differenceInSeconds } from 'date-fns';
+import { addMinutes, compareAsc, differenceInSeconds } from 'date-fns';
 import { DIALOGS } from '../../common/texts';
 
 @Injectable()
@@ -12,12 +12,19 @@ export class RedisService {
   ) {}
 
   async getCounts() {
-    const all = await this.getAll();
+    const all = await this.getAllByKeys();
     return all.length;
   }
 
+  async getAllByKeys() {
+    const all = await this.getAll();
+    return all.filter(
+      (e) => compareAsc(new Date(e), addMinutes(new Date(), 15)) === 1,
+    );
+  }
+
   async getFromArrayWithoutExisting(array: Array<string>) {
-    const allRedis = await this.getAll();
+    const allRedis = await this.getAllByKeys();
     return array.filter((e) => !allRedis.includes(e));
   }
 

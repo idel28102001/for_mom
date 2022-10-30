@@ -53,7 +53,7 @@ export class SignupsService {
   async getCountOfMeets() {
     return await this.signupsRepo
       .createQueryBuilder('S')
-      .where('"S".date>now()')
+      .where('"S".date> now() + interval \'15 minutes\'')
       .getCount()
       .catch((e) => console.log(e));
   }
