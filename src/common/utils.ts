@@ -63,8 +63,10 @@ export const generateWhatsappLink = (phone: string, type: string) => {
 };
 
 export const formatPhone = (phoneNum: string) => {
-  return phoneNum.startsWith('+') || phoneNum.startsWith('7')
+  return phoneNum.startsWith('+')
     ? phoneNum
+    : phoneNum.length > 10
+    ? `+${phoneNum}`
     : `+7${phoneNum}`;
 };
 

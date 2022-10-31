@@ -200,11 +200,13 @@ export class TextsService {
       SignupsNamesEnum[obj.type],
     )}">${toG.P3}</a>`;
     const time = format(obj.date, 'kk:mm');
-    return `${toG.P4}: <b>${time}</b>\n${toG.P5}: ${Texts[obj.type]}\n${
-      (isAdmin && name) || ''
-    }${toG.P6}: ${obj.comment || toG.P7}\n${toG.P8}: <a>${
-      obj.user.phoneNumber
-    }</a>\n${(isAdmin && nickname) || ''}${(isAdmin && whatsapp) || ''}`;
+    return `${toG.P4}: <b>${time} ${toG.P11}</b>\n${toG.P5}: ${
+      Texts[obj.type]
+    }\n${(isAdmin && name) || ''}${toG.P6}: ${obj.comment || toG.P7}\n${
+      toG.P8
+    }: <a>${obj.user.phoneNumber}</a>\n${(isAdmin && nickname) || ''}${
+      (isAdmin && whatsapp) || ''
+    }`;
   }
 
   prepareText(thatDay: string, array: Array<SignupsEntity>, isAdmin: boolean) {

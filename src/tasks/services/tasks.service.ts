@@ -22,6 +22,7 @@ import { SignupsEnum } from '../../signups/enums/signups.enum';
 import { CronJob } from 'cron';
 import { RedisTokenEnum } from '../../redis/enums/tokens/redis.token.enum';
 import { RedisService } from '../../redis/services/redis.service';
+import { menuKeyboard } from '../../telegram/utility/telegramMenuUtility';
 
 @Injectable()
 export class TasksService {
@@ -154,6 +155,7 @@ export class TasksService {
           `${currText} ${DIALOGS.MEETINGS.FUTURE.A1} ${
             SignupsNamesEnum[obj.type]
           }`,
+          menuKeyboard({ session: { role: RolesEnum.USER } } as any),
         )
         .catch((e) => {});
 
@@ -165,6 +167,7 @@ export class TasksService {
               `${currText} ${DIALOGS.MEETINGS.FUTURE.A1} ${
                 SignupsNamesEnum[obj.type]
               }`,
+              menuKeyboard({ session: { role: RolesEnum.ADMIN } } as any),
             )
             .catch((e) => {});
         }),

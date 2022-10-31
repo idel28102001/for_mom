@@ -89,7 +89,7 @@ export const consDiagnostic = async (
 
   let resText = `${cText.P1}\n${cText.P2} ${Texts[type]}\n${cText.P3} ${
     date.split(' (')[0]
-  }\n${cText.P4} ${time}\n${cText.P5} ${phoneNumber}`;
+  }\n${cText.P4} ${time} ${cText.P7}\n${cText.P5} ${phoneNumber}`;
   resText = comment ? `${resText}\n${cText.P6} ${comment}` : resText;
 
   const answer = await prepareReply({
