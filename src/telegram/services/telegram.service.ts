@@ -53,7 +53,7 @@ export class TelegramService {
   ) {
     const text = this.textsService.prepareText(thatDay, meetings, isAdmin);
     await ctx.reply(text, {
-      ...menuKeyboard,
+      ...menuKeyboard(ctx),
       parse_mode: 'HTML',
       disable_web_page_preview: true,
     });
