@@ -42,12 +42,16 @@ export const technicsConversation = async (
         .catch((e) => 0),
     );
     if (response) {
-      await ctx.reply('Всё исправлено успешно!', menuKeyboard(ctx));
+      await ctx
+        .reply('Всё исправлено успешно!', menuKeyboard(ctx))
+        .catch(() => undefined);
     } else {
-      await ctx.reply(
-        'Что-то пошло не так, обратитесь к разработчику',
-        menuKeyboard(ctx),
-      );
+      await ctx
+        .reply(
+          'Что-то пошло не так, обратитесь к разработчику',
+          menuKeyboard(ctx),
+        )
+        .catch(() => undefined);
     }
   }
 };

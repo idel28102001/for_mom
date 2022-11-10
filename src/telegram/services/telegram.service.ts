@@ -52,11 +52,13 @@ export class TelegramService {
     isAdmin: boolean,
   ) {
     const text = this.textsService.prepareText(thatDay, meetings, isAdmin);
-    await ctx.reply(text, {
-      ...menuKeyboard(ctx),
-      parse_mode: 'HTML',
-      disable_web_page_preview: true,
-    });
+    await ctx
+      .reply(text, {
+        ...menuKeyboard(ctx),
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      })
+      .catch(() => undefined);
   }
 
   async editMeet(conversation: MyConversation, ctx: MyContext) {

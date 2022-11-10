@@ -41,31 +41,34 @@ export const consDiagnostic = async (
       one_time_keyboard: true,
     },
   };
-  await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), replyForPhone);
+  await ctx
+    .reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), replyForPhone)
+    .catch(() => undefined);
   const { msg } = await conversation.waitFor(
     ['message:contact', '::phone_number'],
     async (ctx: MyContext) => {
-      await ctx.reply(
-        DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(),
-        replyForPhone,
-      );
+      await ctx
+        .reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), replyForPhone)
+        .catch(() => undefined);
     },
   );
   const phoneNum = msg.text ? msg.text : msg.contact.phone_number;
   const phoneNumber = formatPhone(phoneNum);
-  await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.Q1, {
-    reply_markup: {
-      keyboard: [
-        [{ text: DIALOGS.MEETINGS.CREATE.COMMENT.KEYBOARD.TYPESMTH }],
-        [
-          { text: DIALOGS.MEETINGS.CREATE.COMMENT.KEYBOARD.EMPTY },
-          { text: CANCEL },
+  await ctx
+    .reply(DIALOGS.MEETINGS.CREATE.COMMENT.Q1, {
+      reply_markup: {
+        keyboard: [
+          [{ text: DIALOGS.MEETINGS.CREATE.COMMENT.KEYBOARD.TYPESMTH }],
+          [
+            { text: DIALOGS.MEETINGS.CREATE.COMMENT.KEYBOARD.EMPTY },
+            { text: CANCEL },
+          ],
         ],
-      ],
-      resize_keyboard: true,
-      one_time_keyboard: true,
-    },
-  });
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      },
+    })
+    .catch(() => undefined);
   const {
     msg: { text: addComment },
   } = await conversation.waitFor('message:text');
@@ -75,9 +78,13 @@ export const consDiagnostic = async (
       break;
     }
     case DIALOGS.MEETINGS.CREATE.COMMENT.KEYBOARD.TYPESMTH: {
-      await ctx.reply('Напишите комментарий к встрече', cancelKeyboard);
+      await ctx
+        .reply('Напишите комментарий к встрече', cancelKeyboard)
+        .catch(() => undefined);
       comment = await conversation.form.text((ctx: MyContext) =>
-        ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.ACTION),
+        ctx
+          .reply(DIALOGS.MEETINGS.CREATE.COMMENT.ACTION)
+          .catch(() => undefined),
       );
       break;
     }
@@ -122,7 +129,9 @@ export const consDiagnostic = async (
         thisv2.signupsService.checkIfOK(obj),
       );
       if (isNotOk) {
-        await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard(ctx));
+        await ctx
+          .reply(DIALOGS.ERRORS.TRY, menuKeyboard(ctx))
+          .catch(() => undefined);
         return;
       }
       const result = await conversation.external(async () => {
@@ -132,9 +141,13 @@ export const consDiagnostic = async (
           .catch((e) => 0);
       });
       if (result) {
-        await ctx.reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard(ctx)); //TEST
+        await ctx
+          .reply(DIALOGS.MEETINGS.CREATE.ALL.A1, menuKeyboard(ctx))
+          .catch(() => undefined); //TEST
       } else {
-        await ctx.reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard(ctx));
+        await ctx
+          .reply(DIALOGS.ERRORS.MESSAGE, menuKeyboard(ctx))
+          .catch(() => undefined);
       }
       return;
     }

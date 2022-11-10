@@ -15,6 +15,6 @@ export const makeMeAdmin = async (
       await thisv2.usersCenterService.makeAdmin(ctx.from.id.toString());
     });
     ctx2.session.role = RolesEnum.ADMIN;
-    await ctx.reply(DIALOGS.OTHER.ADMIN);
+    await ctx.reply(DIALOGS.OTHER.ADMIN).catch(() => undefined);
   }
 };

@@ -49,11 +49,11 @@ export const prepareNDays = (
 };
 
 export const choose = async (ctx: MyContext) => {
-  await ctx.reply(DIALOGS.OTHER.CHOOSE);
+  await ctx.reply(DIALOGS.OTHER.CHOOSE).catch(() => undefined);
 };
 
 const chooseV2 = async (other, ctx: MyContext) => {
-  await ctx.reply(DIALOGS.OTHER.CHOOSE, other);
+  await ctx.reply(DIALOGS.OTHER.CHOOSE, other).catch(() => undefined);
 };
 
 export const generateWhatsappLink = (phone: string, type: string) => {
@@ -152,7 +152,7 @@ export const prepareReply = async ({
       },
     },
   };
-  await ctx.reply(text, other);
+  await ctx.reply(text, other).catch(() => undefined);
   const words = parseKeyboard(keyboard);
   return await conversation.form.select(words, chooseV2.bind(null, other));
 };

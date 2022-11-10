@@ -14,7 +14,7 @@ export const diagnosticTest = async (
   type: SignupsEnum,
 ) => {
   // const s = await thisv2.signupsService.getDays(SignupsDuration.DIAGNOSTIC);
-  await ctx.reply('Мы в тесте');
+  await ctx.reply('Мы в тесте').catch(() => undefined);
   // if (true) {
   //   //TEST
   const obj = {

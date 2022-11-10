@@ -56,6 +56,8 @@ export class TelegramUpdate {
 
   @Help()
   async onHelp(@Ctx() ctx: Context): Promise<void> {
-    await ctx.reply('Это бот записей на онлайн приём к Эльмире Гатауллиной');
+    await ctx
+      .reply('Это бот записей на онлайн приём к Эльмире Гатауллиной')
+      .catch(() => undefined);
   }
 }

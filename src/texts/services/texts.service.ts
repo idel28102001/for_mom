@@ -115,7 +115,9 @@ export class TextsService {
   }
 
   async AUSComment(ctx: MyContext, conversation: MyConversation) {
-    await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.ACTION);
+    await ctx
+      .reply(DIALOGS.MEETINGS.CREATE.COMMENT.ACTION)
+      .catch(() => undefined);
     const comment = await conversation.form.text();
     const text = `${DIALOGS.MEETINGS.CREATE.COMMENT.S1} ${comment}\n\n${DIALOGS.CONFIRMATION.QUESTIONS.Q1}`;
     const answer = await prepareReply({
@@ -138,17 +140,21 @@ export class TextsService {
     const keyboard = new Keyboard()
       .requestContact(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.SHARE)
       .text(CANCEL);
-    await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), {
-      reply_markup: {
-        keyboard: keyboard.build(),
-        resize_keyboard: true,
-        one_time_keyboard: true,
-      },
-    });
+    await ctx
+      .reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION(), {
+        reply_markup: {
+          keyboard: keyboard.build(),
+          resize_keyboard: true,
+          one_time_keyboard: true,
+        },
+      })
+      .catch(() => undefined);
     const { msg } = await conversation.waitFor(
       ['message:contact', '::phone_number'],
       async (ctx: MyContext) => {
-        await ctx.reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION());
+        await ctx
+          .reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.ACTION())
+          .catch(() => undefined);
       },
     );
     const phoneNumber = msg.text ? msg.text : msg.contact.phone_number;

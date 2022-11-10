@@ -34,5 +34,5 @@ export const menuKeyboard = (ctx: MyContext) => {
 };
 
 export const telegramMenuUtility = async (ctx: MyContext) => {
-  await ctx.reply('Выбери услугу', menuKeyboard(ctx));
+  await ctx.reply('Выбери услугу', menuKeyboard(ctx)).catch(() => undefined);
 };

@@ -22,7 +22,7 @@ const editMeeting = async (
     return await thisv2.signupsService.getAll(isAdmin, ctx.from.id.toString());
   });
   if (daysForKeyboard.length === 0) {
-    await ctx.reply(DIALOGS.MEETINGS.DAYS.A1);
+    await ctx.reply(DIALOGS.MEETINGS.DAYS.A1).catch(() => undefined);
     return;
   }
   let meetings = all[0].meetings;
@@ -76,7 +76,9 @@ const editMeeting = async (
           comment,
         }),
       );
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.COMMENT.A1, menuKeyboard(ctx));
+      await ctx
+        .reply(DIALOGS.MEETINGS.CREATE.COMMENT.A1, menuKeyboard(ctx))
+        .catch(() => undefined);
       return;
     }
     case DIALOGS.MEETINGS.EDIT.EVENT.PHONE_NUMBER: {
@@ -87,10 +89,9 @@ const editMeeting = async (
           phoneNumber,
         }),
       );
-      await ctx.reply(
-        DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.A1,
-        menuKeyboard(ctx),
-      );
+      await ctx
+        .reply(DIALOGS.MEETINGS.CREATE.PHONE_NUMBER.A1, menuKeyboard(ctx))
+        .catch(() => undefined);
       return;
     }
     case DIALOGS.MEETINGS.EDIT.EVENT.DATE: {
@@ -110,13 +111,17 @@ const editMeeting = async (
         ),
       );
       if (isNotOk) {
-        await ctx.reply(DIALOGS.ERRORS.TRY, menuKeyboard(ctx));
+        await ctx
+          .reply(DIALOGS.ERRORS.TRY, menuKeyboard(ctx))
+          .catch(() => undefined);
         return;
       }
       await conversation.external(() =>
         thisv2.meetingsService.editMeeting({ date: resDate, meet }),
       );
-      await ctx.reply(DIALOGS.MEETINGS.CREATE.DATE.A1, menuKeyboard(ctx));
+      await ctx
+        .reply(DIALOGS.MEETINGS.CREATE.DATE.A1, menuKeyboard(ctx))
+        .catch(() => undefined);
       break;
     }
   }
